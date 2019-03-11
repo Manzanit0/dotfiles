@@ -1,0 +1,24 @@
+xcode-select --install
+
+exec brew-install
+
+# Install NVM, and latest node
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+nvm install node # "node" is an alias for the latest version
+
+# Command prompt for ZSH
+npm install --global lambda-pure-prompt
+
+# Copy all dot files to home directory
+for f in ../src/* do
+  cp -v "$f" ~/
+done
+
+# Install vim plugins via Vundle
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+nvim +PluginInstall +qall
+
+# Copy scripts
+for f in ../scripts/* do
+  cp -v "$f" /usr/local/bin/
+done

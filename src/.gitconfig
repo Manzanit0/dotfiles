@@ -1,0 +1,8 @@
+[core]
+  excludesfile = ~/.gitignore-global
+[user]
+  name = Manzanit0
+  email = unico.javier@gmail.com
+[push]
+  # push should only push current branch, not all branches
+  default = current
