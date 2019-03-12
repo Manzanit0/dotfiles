@@ -19,6 +19,12 @@ Plugin 'junegunn/fzf.vim' " Along with the_silver_searcher => search stuff. TODO
 Plugin 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plugin 'tpope/vim-dispatch' " Asynchronous build and test dispatcher
 
+Plugin 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
+let g:deoplete#enable_at_startup = 1
+
+"-------------------
+" Git
+"-------------------
 Plugin 'tpope/vim-fugitive' " Git tools
 set diffopt+=vertical
 
@@ -29,31 +35,73 @@ let g:gitgutter_realtime = 1
 let g:gitgutter_eager = 1
 set updatetime=100
 
-Plugin 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
-let g:deoplete#enable_at_startup = 1
-
+"-------------------
 " Markdown
+"-------------------
 Plugin 'suan/vim-instant-markdown'
 
+"-------------------
 " Ruby
+"-------------------
 Plugin 'vim-ruby/vim-ruby' " Syntax highlighting for Ruby.
 Plugin 'tpope/vim-endwise' " Adds closing tags for Ruby
+let ruby_fold = 1
+let ruby_spellcheck_strings = 1
 
+"-------------------
 " Elixir
+"-------------------
 Plugin 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
 Plugin 'slashmili/alchemist.vim' " Gotodef, autocomplete and tooling.
 let g:alchemist_tag_map = '<C-]>'
 let g:alchemist_tag_stack_map = '<C-[>'
 
+"-------------------
+" Go
+" -----------------
+Plugin 'fatih/vim-go'
+Plugin 'nsf/gocode', {'rtp': 'nvim/'}
+
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+let g:go_auto_sameids = 1 " Highlights all references of the variable under the cursor
+let g:go_fmt_command = "goimports"
+let g:go_auto_type_info = 1 " Shows type information in the statusbar
+
+au FileType go set noexpandtab " Go standard is tabs.
+au FileType go set shiftwidth=4
+au FileType go set softtabstop=4
+au FileType go set tabstop=4
+au FileType go set nolist " Go uses tabs and the fmt autoformatter.
+
+" Goes to the alternate test (:GoAlternate)
+au Filetype go nmap <leader>ga <Plug>(go-alternate-edit)
+au Filetype go nmap <leader>gah <Plug>(go-alternate-split)
+au Filetype go nmap <leader>gav <Plug>(go-alternate-vertical)
+au FileType go nmap <F10> :GoTest -short<cr>
+au FileType go nmap <F9> :GoCoverageToggle -short<cr>
+au FileType go nmap <F12> <Plug>(go-def)
+
+"-------------------
 " Clojure
+"-------------------
 Plugin 'guns/vim-clojure-static' " Meikel Brandmeyer's excellent Clojure runtime files.
 Plugin 'guns/vim-clojure-highlight' "Extend builtin syntax highlighting to referred and aliased vars in Clojure buffers
 autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry " Evaluate Clojure buffers on load
+
 Plugin 'kien/rainbow_parentheses.vim' " Better Rainbow Parentheses
 Plugin 'tpope/vim-fireplace' " Clojure REPL support.
 "Plugin 'tpope/vim-salve' " Static Vim support for Leiningen and Boot.
 
+"-------------------
 " Javascript/HTML/CSS
+"-------------------
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'elzr/vim-json'
@@ -61,13 +109,18 @@ Plugin 'othree/html5.vim'
 Plugin 'hail2u/vim-css3-syntax'
 Plugin 'cakebaker/scss-syntax.vim'
 
+"-------------------
 " PHP/Twig
+"-------------------
 Plugin 'lumiliet/vim-twig'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+"-------------------
+" NerdTree
+"-------------------
 " Map NerdTree toggle to F6
 nmap <F6> :NERDTreeToggle<CR>
 " Shuts vim if NerdTree is the last window left
@@ -76,56 +129,62 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 autocmd vimenter * NERDTree
 let NERDTreeShowHidden=1
 
+"-------------------
+" Colors
+"-------------------
 syntax on
 colorscheme monokai
 
-" Show trailing whitespace and spaces before a tab:
-:highlight ExtraWhitespace ctermbg=red guibg=red
-:autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\\t/
+if (has("nvim"))
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
 
-" vim-ruby configuration
-:let ruby_fold = 1
-:let ruby_spellcheck_strings = 1
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+if (has("termguicolors"))
+  set termguicolors
+endif
+
+"-------------------
+" General config
+"-------------------
+set list listchars=tab:»·,trail:·,nbsp:· " Display extra whitespace
+
+" Show trailing whitespace and spaces before a tab:
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\\t/
 
 set foldmethod=syntax
 set nofoldenable " Files don't start folded
-set nu
 set backspace=indent,eol,start
-set tabstop=2
 set nosmartindent
 set autoindent
 set cursorline " highlight the current line the cursor is on
 set cuc cul    " highlight the current column the cursor is on
 
-set laststatus=2 " Shows the current status of the file.
-set expandtab
-set shiftwidth=2
-set softtabstop=2
+set laststatus=2  " Shows the current status of the file.
+set expandtab     " Replaces a <TAB> with spaces
+set shiftwidth=2  " The amount to block indent when using < and >
+set shiftround    " Shift to the next round tab stop
+set tabstop=2     " 2 space tab
+set softtabstop=2 " Causes backspace to delete 2 spaces = converted <TAB>
+set smarttab      " Uses shiftwidth instead of tabstop at start of lines
 
-" Numbers
+" Numbers in the side
+set nu
 set number
 set numberwidth=5
 
 " Searching
-set hlsearch " Highlights the areas that you search for.
-set incsearch " Searches incrementally as you type.
-set ignorecase
-set smartcase " If you start writing in camel case, it will assume that you want camelcased. Otherwise it will be case insensative.
+set hlsearch   " Highlights the areas that you search for.
+set incsearch  " Searches incrementally as you type.
+set ignorecase " Case Insensitivity Pattern Matching
+set smartcase  " Overrides ignorecase if pattern contains upcase
 
-"sm: flashes matching brackets or parentheses
-set showmatch
-
-" Softtabs, 2 spaces
-set tabstop=2
-set shiftwidth=2
-set shiftround
-set expandtab
-set smarttab
-
+set showmatch "sm: flashes matching brackets or parentheses
 set clipboard=unnamed " Copy&Paste works with the system too.
-
-" Display extra whitespace
-set list listchars=tab:»·,trail:·,nbsp:·
 
 " When scrolling off-screen do so 3 lines at a time, not 1
 set scrolloff=3
@@ -136,6 +195,10 @@ set splitright
 
 " My leader key
 let mapleader=","
+
+" Run the current file with rspec
+nmap <silent> <leader>f :TestFile<CR>
+nmap <silent> <leader>s :TestSuite<CR>
 
 " Buffer switching
 map <leader>p :bp<CR> " ,p previous buffer
@@ -159,6 +222,7 @@ nmap :Q! :q!
 nmap :Qa :qa
 nmap :Wq! :wq!
 nmap :WQ! :wq!
+
 " Don't be a noob, join the no arrows key movement
 inoremap  <Up>     <NOP>
 inoremap  <Down>   <NOP>
@@ -168,3 +232,9 @@ noremap   <Up>     <NOP>
 noremap   <Down>   <NOP>
 noremap   <Left>   <NOP>
 noremap   <Right>  <NOP>
+
+" Quickly open .nvimrc in new tab
+nnoremap <leader>v :tabedit ~/.nvimrc<CR>
+
+" Quickly source .vimrc
+nnoremap <leader>r :source $MYVIMRC<CR>
