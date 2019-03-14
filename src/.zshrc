@@ -7,11 +7,10 @@ plugins=(git osx tmux github fasd history-substring-search zsh-syntax-highlighti
 
 source $ZSH/oh-my-zsh.sh
 
-# Load custom prompt (lambda-pure).
-ZSH_THEME="lambda-pure"
+# Load custom prompt – github.com/sindresorhus/pure
 autoload -U promptinit; promptinit
-PURE_NODE_ENABLED=0
-prompt lambda-pure
+PURE_PROMPT_SYMBOL='%(?.%F{yellow}λ.%F{red}λ)%f '
+prompt pure
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
