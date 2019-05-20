@@ -4,20 +4,27 @@ filetype off                  " required
 "-------------------
 " Leader mappings
 "-------------------
-let mapleader="s"
-
-" Buffer switching
-map <leader>p :bp<CR> " ,p previous buffer
-map <leader>n :bn<CR> " ,n next buffer
-nmap <Leader><CR> :nohlsearch<cr>
-noremap <Leader>rx :!ruby %<CR>
-noremap <Leader>re :!ruby %·
+let mapleader=","
 
 " Quickly open .nvimrc in new tab
 nnoremap <leader>v :tabedit ~/.nvimrc<CR>
 
 " Quickly source .vimrc
 nnoremap <leader>r :source $MYVIMRC<CR>
+" Buffer switching
+map <leader>p :bp<CR>
+map <leader>n :bn<CR>
+
+" Clear search results
+nmap <Leader><CR> :nohlsearch<cr>
+
+" Ctrl + r: rename over file
+vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
+
+nmap <Leader>ec :IEx<cr>
+
+noremap <Leader>rx :!ruby %<CR>
+noremap <Leader>re :!ruby %·
 
 "-------------------------
 " General purpose plugins
@@ -62,7 +69,7 @@ map <Leader>vq :VimuxCloseRunner<CR>
 Plugin 'scrooloose/nerdtree' " File explorer
 " Map NerdTree toggle
 nmap <F6> :NERDTreeToggle<CR>
-nmap <leader>= :NERDTreeToggle<CR>
+nmap <leader>, :NERDTreeToggle<CR>
 
 " Shuts vim if NerdTree is the last window left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
