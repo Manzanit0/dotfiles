@@ -35,6 +35,8 @@ Plugin 'vim-airline/vim-airline' " Navbar
 Plugin 'vim-airline/vim-airline-themes' " Colours for Navbar
 Plugin 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plugin 'kien/ctrlp.vim' " Fuzzy finder for files, etc.
+let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""' " requires ag installed!
+
 Plugin 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plugin 'tpope/vim-dispatch' " Asynchronous build and test dispatcher
 
