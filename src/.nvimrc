@@ -164,6 +164,27 @@ Plug 'othree/html5.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'cakebaker/scss-syntax.vim'
 
+" N.B. For ternjs to work, :UpdateRemotePlugins must be run in nvim.
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
+let g:tern_request_timeout = 1
+let g:tern_request_timeout = 6000
+let g:tern#command = ["tern"]
+let g:tern#arguments = [" — persistent"]
+
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+let g:deoplete#sources#ternjs#types = 1
+let g:deoplete#sources#ternjs#depths = 1
+let g:deoplete#sources#ternjs#docs = 1
+let g:deoplete#sources#ternjs#filter = 0
+let g:deoplete#sources#ternjs#case_insensitive = 1
+let g:deoplete#sources#ternjs#guess = 0
+let g:deoplete#sources#ternjs#sort = 0
+let g:deoplete#sources#ternjs#expand_word_forward = 0
+let g:deoplete#sources#ternjs#omit_object_prototype = 0
+let g:deoplete#sources#ternjs#include_keywords = 1
+let g:deoplete#sources#ternjs#in_literal = 0
+let g:deoplete#sources#ternjs#filetypes = ['jsx', 'javascript.jsx', 'vue', '...']
+
 "-------------------
 " PHP/Twig
 "-------------------
