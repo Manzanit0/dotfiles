@@ -30,33 +30,29 @@ noremap <Leader>re :!ruby %·
 " General purpose plugins
 "-------------------------
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.config/nvim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.local/share/nvim/plugged')
 
-" let Vundle manage Vundle, REQUIRED
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'crusoexia/vim-monokai' " Color theme
-Plugin 'sheerun/vim-polyglot' " Overall language support
-Plugin 'vim-airline/vim-airline' " Navbar
-Plugin 'vim-airline/vim-airline-themes' " Colours for Navbar
-Plugin 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
-Plugin 'kien/ctrlp.vim' " Fuzzy finder for files, etc.
+Plug 'crusoexia/vim-monokai' " Color theme
+Plug 'sheerun/vim-polyglot' " Overall language support
+Plug 'vim-airline/vim-airline' " Navbar
+Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
+Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
+Plug 'kien/ctrlp.vim' " Fuzzy finder for files, etc.
 let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""' " requires ag installed!
 
-Plugin 'tpope/vim-surround' " quoting/parenthesizing made simple
-Plugin 'tpope/vim-dispatch' " Asynchronous build and test dispatcher
+Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
+Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher
 
 "-------------------
 " Deoplete
 "-------------------
-Plugin 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
+Plug 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
 let g:deoplete#enable_at_startup = 1
 
 "-------------------
 " Vimux
 "-------------------
-Plugin 'benmills/vimux' " Easy interaction with tmux
+Plug 'benmills/vimux' " Easy interaction with tmux
 map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
 map <Leader>rc :call VimuxRunCommand("clear; lein test ")<CR>
 map <Leader>vp :VimuxPromptCommand<CR>
@@ -66,7 +62,7 @@ map <Leader>vq :VimuxCloseRunner<CR>
 "-------------------
 " NerdTree
 "-------------------
-Plugin 'scrooloose/nerdtree' " File explorer
+Plug 'scrooloose/nerdtree' " File explorer
 " Map NerdTree toggle
 nmap <F6> :NERDTreeToggle<CR>
 nmap <leader>, :NERDTreeToggle<CR>
@@ -81,10 +77,10 @@ let NERDTreeShowHidden=1
 "-------------------
 " Git
 "-------------------
-Plugin 'tpope/vim-fugitive' " Git tools
+Plug 'tpope/vim-fugitive' " Git tools
 set diffopt+=vertical
 
-Plugin 'airblade/vim-gitgutter' " Shows a git diff in the gutter
+Plug 'airblade/vim-gitgutter' " Shows a git diff in the gutter
 let g:gitgutter_enabled = 1
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_realtime = 1
@@ -94,29 +90,29 @@ set updatetime=100
 "-------------------
 " Markdown
 "-------------------
-Plugin 'suan/vim-instant-markdown'
+Plug 'suan/vim-instant-markdown'
 
 "-------------------
 " Ruby
 "-------------------
-Plugin 'vim-ruby/vim-ruby' " Syntax highlighting for Ruby.
-Plugin 'tpope/vim-endwise' " Adds closing tags for Ruby
+Plug 'vim-ruby/vim-ruby' " Syntax highlighting for Ruby.
+Plug 'tpope/vim-endwise' " Adds closing tags for Ruby
 let ruby_fold = 1
 let ruby_spellcheck_strings = 1
 
 "-------------------
 " Elixir
 "-------------------
-Plugin 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
-Plugin 'slashmili/alchemist.vim' " Gotodef, autocomplete and tooling.
+Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
+Plug 'slashmili/alchemist.vim' " Gotodef, autocomplete and tooling.
 let g:alchemist_tag_map = '<C-]>'
 let g:alchemist_tag_stack_map = '<C-[>'
 
 "-------------------
 " Go
 " -----------------
-Plugin 'fatih/vim-go'
-Plugin 'nsf/gocode', {'rtp': 'nvim/'}
+Plug 'fatih/vim-go'
+Plug 'nsf/gocode', {'rtp': 'nvim/'}
 
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
@@ -150,41 +146,40 @@ au FileType go nmap <Leader>2 :GoCoverageToggle -short<cr>
 "-------------------
 " Clojure
 "-------------------
-Plugin 'guns/vim-clojure-static' " Meikel Brandmeyer's excellent Clojure runtime files.
-Plugin 'guns/vim-clojure-highlight' "Extend builtin syntax highlighting to referred and aliased vars in Clojure buffers
+Plug 'guns/vim-clojure-static' " Meikel Brandmeyer's excellent Clojure runtime files.
+Plug 'guns/vim-clojure-highlight' "Extend builtin syntax highlighting to referred and aliased vars in Clojure buffers
 autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry " Evaluate Clojure buffers on load
 
-Plugin 'kien/rainbow_parentheses.vim' " Better Rainbow Parentheses
-Plugin 'tpope/vim-fireplace' " Clojure REPL support.
-"Plugin 'tpope/vim-salve' " Static Vim support for Leiningen and Boot.
+Plug 'kien/rainbow_parentheses.vim' " Better Rainbow Parentheses
+Plug 'tpope/vim-fireplace' " Clojure REPL support.
+"Plug 'tpope/vim-salve' " Static Vim support for Leiningen and Boot.
 
 "-------------------
 " Javascript/HTML/CSS
 "-------------------
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
-Plugin 'elzr/vim-json'
-Plugin 'othree/html5.vim'
-Plugin 'hail2u/vim-css3-syntax'
-Plugin 'cakebaker/scss-syntax.vim'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'elzr/vim-json'
+Plug 'othree/html5.vim'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'cakebaker/scss-syntax.vim'
 
 "-------------------
 " PHP/Twig
 "-------------------
-Plugin 'lumiliet/vim-twig'
+Plug 'lumiliet/vim-twig'
 
 "-------------------
 " Perl
 "-------------------
-Plugin 'vim-perl/vim-perl'
+Plug 'vim-perl/vim-perl'
 let perl_fold = 1
 " let perl_nofold_subs = 1
 let perl_nofold_packages = 1
 let php_sql_query = 1
 
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()
 
 "-------------------
 " General config
