@@ -166,6 +166,15 @@ Plugin 'cakebaker/scss-syntax.vim'
 "-------------------
 Plugin 'lumiliet/vim-twig'
 
+"-------------------
+" Perl
+"-------------------
+Plugin 'vim-perl/vim-perl'
+let perl_fold = 1
+" let perl_nofold_subs = 1
+let perl_nofold_packages = 1
+let php_sql_query = 1
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
