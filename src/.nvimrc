@@ -41,7 +41,9 @@ Plug 'kien/ctrlp.vim' " Fuzzy finder for files, etc.
 let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""' " requires ag installed!
 
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
-Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher
+Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
+
+Plug 'sbdchd/neoformat'
 
 "-------------------
 " Deoplete
