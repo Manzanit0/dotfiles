@@ -6,11 +6,10 @@ filetype off                  " required
 "-------------------
 let mapleader=","
 
-" Quickly open .nvimrc in new tab
-nnoremap <leader>v :tabedit ~/.nvimrc<CR>
+" Quickly open/source .nvimrc in new tab
+nnoremap <leader>nc :tabedit ~/.config/nvim/init.vim<CR>
+nnoremap <leader>nr :source ~/.config/nvim/init.vim<CR>
 
-" Quickly source .vimrc
-nnoremap <leader>r :source $MYVIMRC<CR>
 " Buffer switching
 map <leader>p :bp<CR>
 map <leader>n :bn<CR>
@@ -21,12 +20,76 @@ nmap <Leader><CR> :nohlsearch<cr>
 " Ctrl + r: rename over file
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 
-nmap <Leader>ec :IEx<cr>
+"-------------------------
+" Copied from nietaki-files
+"-------------------------
 
-noremap <Leader>rx :!ruby %<CR>
-noremap <Leader>re :!ruby %·
+" maximize the window
+nmap <Leader>wm <C-W>_ <C-W>\|
+
+" distribute the windows equally
+nnoremap <Leader>w= <C-W>=
+
+" save all open buffers
+nnoremap <Leader>ps :wa<CR>
+
+" refresh the currently edited file from disk
+nnoremap <Leader>fR :e!<CR>
+
+" https://vi.stackexchange.com/questions/458/how-can-i-reload-all-buffers-at-once
+nnoremap <Leader>fr :checktime<CR>
+
+" close nerdtree when you open a file
+let NERDTreeQuitOnOpen = 1
+
+" delete the buffer when you delete a file
+let NERDTreeAutoDeleteBuffer = 1
+map <C-\> :NERDTreeToggle<CR>
+
+" opens the current file in nerdtree 
+map <C-o> :NERDTreeFind<CR>
+
+" quit
+nnoremap <Leader>qq :qa<CR>
+
+" --hidden makes ag not skip the hidden files when searching
+let $FZF_DEFAULT_COMMAND = 'ag --hidden -g ""'
+
+" Configure :Ag to exclude file names. Search only contents.
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
+" Search file name with preview
+nmap <Leader>f/ :Files<CR>
+
+" Search file contents
+nmap <Leader>c/ :AgFuzzy<CR>
+
+" Search in current file's lines
+nmap <Leader>l/ :BLines<CR>
+
+" recent buffer history
+nnoremap <Leader>bh :CtrlPMRUFiles<CR>
+
+" absolute path (/something/src/foo.txt)
+nnoremap <leader>cF :let @+=expand("%:p")<CR>
+
+" relative path (src/foo.txt)
+nnoremap <leader>cf :let @+=expand("%")<CR>
+
+" fugitive shortcuts
+" Working with maps: https://github.com/tpope/vim-fugitive/blob/master/doc/fugitive.txt#L252
+nmap <Leader>gs :Gstatus<CR>
+nmap <Leader>gc :Gcommit<CR>
+" nmap <Leader>gp :Git shove<CR>
+nmap <Leader>gb :Gblame<CR>
+
+let g:flog_default_arguments = { 'max_count': 1000 }
+nmap <Leader>gl :Flog<CR>
+nmap <Leader>gL :Flogsplit<CR>
 
 "-------------------------
+"
 " General purpose plugins
 "-------------------------
 " set the runtime path to include Vundle and initialize
@@ -45,6 +108,11 @@ Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
 
 Plug 'sbdchd/neoformat'
 
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'wesQ3/vim-windowswap'
+
+Plug 'junegunn/goyo.vim'
 "-------------------
 " Deoplete
 "-------------------
@@ -79,6 +147,7 @@ let NERDTreeShowHidden=1
 "-------------------
 " Git
 "-------------------
+Plug 'rbong/vim-flog'
 Plug 'tpope/vim-fugitive' " Git tools
 set diffopt+=vertical
 
