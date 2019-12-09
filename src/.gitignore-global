@@ -11,3 +11,11 @@ __MACOSX/*
 
 # JetBrains Idea workspace file, never a need to check it in.
 *.iws
+
+# Elixir stuff
+.elixir_ls
+.elixir_ls/*
+
+# Editor stuff
+.vscode
+.idea

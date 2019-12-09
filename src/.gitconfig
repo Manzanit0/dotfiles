@@ -1,8 +1,18 @@
-[core]
-  excludesfile = ~/.gitignore-global
 [user]
-  name = Manzanit0
   email = unico.javier@gmail.com
+  name = Manzanit0
+[core]
+  excludesfile = ~/.gitignore_global
+[alias]
+  branch-name = rev-parse --abbrev-ref HEAD
+  tug = !git pull origin $(git branch-name)
+  nuke = reset --hard HEAD
+  amend = commit -a --amend
+  ca = commit -a
+  shove = push -u origin HEAD
+  delete-merged-branches = ! git branch --merged master | grep -v \"\\* master\" | xargs -n 1 git branch -d
+  visual = log --oneline --decorate --graph --all
+  recent = branch --sort=-committerdate 
+  recents = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
 [push]
-  # push should only push current branch, not all branches
-  default = current
+  default = simple
