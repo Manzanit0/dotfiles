@@ -15,6 +15,10 @@ prompt pure
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
+# Enabled history for Elixir iex
+export ERL_AFLAGS="-kernel shell_history enabled"
+export EDITOR='nvim'
+
 # Allow tmux work properly (hack?)
 alias tmux="TERM=screen-256color-bce tmux"
 set -g default-terminal "screen-256color"
