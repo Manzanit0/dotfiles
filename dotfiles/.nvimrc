@@ -4,7 +4,7 @@ filetype off                  " required
 "-------------------
 " Leader mappings
 "-------------------
-let mapleader=","
+let mapleader=" "
 
 " Quickly open/source .nvimrc in new tab
 nnoremap <leader>nc :tabedit ~/.config/nvim/init.vim<CR>
@@ -38,16 +38,6 @@ nnoremap <Leader>fR :e!<CR>
 
 " https://vi.stackexchange.com/questions/458/how-can-i-reload-all-buffers-at-once
 nnoremap <Leader>fr :checktime<CR>
-
-" close nerdtree when you open a file
-let NERDTreeQuitOnOpen = 1
-
-" delete the buffer when you delete a file
-let NERDTreeAutoDeleteBuffer = 1
-map <C-\> :NERDTreeToggle<CR>
-
-" opens the current file in nerdtree 
-map <C-o> :NERDTreeFind<CR>
 
 " quit
 nnoremap <Leader>qq :qa<CR>
@@ -113,9 +103,6 @@ Plug 'junegunn/fzf.vim'
 Plug 'wesQ3/vim-windowswap'
 
 Plug 'junegunn/goyo.vim'
-"-------------------
-" Deoplete
-"-------------------
 Plug 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
 let g:deoplete#enable_at_startup = 1
 
@@ -125,6 +112,7 @@ let g:deoplete#enable_at_startup = 1
 Plug 'benmills/vimux' " Easy interaction with tmux
 map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
 map <Leader>rc :call VimuxRunCommand("clear; lein test ")<CR>
+
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vq :VimuxCloseRunner<CR>
@@ -133,9 +121,16 @@ map <Leader>vq :VimuxCloseRunner<CR>
 " NerdTree
 "-------------------
 Plug 'scrooloose/nerdtree' " File explorer
-" Map NerdTree toggle
-nmap <F6> :NERDTreeToggle<CR>
-nmap <leader>, :NERDTreeToggle<CR>
+
+" close nerdtree when you open a file
+let NERDTreeQuitOnOpen = 1
+
+" delete the buffer when you delete a file
+let NERDTreeAutoDeleteBuffer = 1
+map <C-\> :NERDTreeToggle<CR>
+
+" opens the current file in nerdtree
+map <C-o> :NERDTreeFind<CR>
 
 " Shuts vim if NerdTree is the last window left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -179,51 +174,47 @@ Plug 'slashmili/alchemist.vim' " Gotodef, autocomplete and tooling.
 let g:alchemist_tag_map = '<C-]>'
 let g:alchemist_tag_stack_map = '<C-[>'
 
+" TODO Add elixir support to ALE
+" https://github.com/dense-analysis/ale/blob/master/doc/ale-elixir.txt
+" https://github.com/elixir-lsp
+
 "-------------------
 " Go
 " -----------------
-Plug 'fatih/vim-go'
-Plug 'nsf/gocode', {'rtp': 'nvim/'}
+Plug 'dense-analysis/ale'
+  let g:ale_fix_on_save = 1
+  let g:ale_lint_on_save = 1
+  let g:ale_lint_on_insert_leave = 0
+  let g:ale_lint_on_text_changed = 0
+  let g:ale_linters_explicit = 1
+  let g:ale_fixers = {
+        \   'go': ['goimports', 'gofmt'],
+        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \ }
+  let g:ale_linters = {
+        \   'go': ['gopls', 'golangci-lint'],
+        \ }
+  let g:ale_type_map = {
+        \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
+        \ }
+  let g:ale_go_gofmt_options = '-s'
+  let g:ale_lsp_show_message_severity = 'warning'
+  let g:ale_sign_error = 'E'
+  let g:ale_sign_warning = 'W'
+  let g:ale_sign_info = 'I'
+  let g:ale_set_highlights = 0
+  let g:ale_completion_enabled = 0 "Must be disabled so deoplete works
+  set omnifunc=ale#completion#OmniFunc
+  set completeopt=menu,menuone,noinsert,noselect " noinsert and noselect are required for ALE to complete as you type
 
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_types = 1
-let g:go_auto_sameids = 1 " Highlights all references of the variable under the cursor
-let g:go_fmt_command = "goimports"
-let g:go_auto_type_info = 1 " Shows type information in the statusbar
+  " Some basic ALE navigating
+  au FileType go nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  au FileType go nnoremap <silent> <buffer> K :ALEHover<CR>
+  au FileType go nmap <F2> :ALEFindReferences<CR>
 
-au FileType go set noexpandtab " Go standard is tabs.
-au FileType go set shiftwidth=4
-au FileType go set softtabstop=4
-au FileType go set tabstop=4
-au FileType go set nolist " Go uses tabs and the fmt autoformatter.
-
-" Goes to the alternate test (:GoAlternate)
-au Filetype go nmap <leader>ga <Plug>(go-alternate-edit)
-au Filetype go nmap <leader>gah <Plug>(go-alternate-split)
-au Filetype go nmap <leader>gav <Plug>(go-alternate-vertical)
-au FileType go nmap <F10> :GoTest -short<cr>
-au FileType go nmap <F9> :GoCoverageToggle -short<cr>
-au FileType go nmap <F12> <Plug>(go-def)
-
-au FileType go nmap <Leader>1 :GoTest -short<CR>
-au FileType go nmap <Leader>2 :GoCoverageToggle -short<cr>
-
-"-------------------
-" Clojure
-"-------------------
-Plug 'guns/vim-clojure-static' " Meikel Brandmeyer's excellent Clojure runtime files.
-Plug 'guns/vim-clojure-highlight' "Extend builtin syntax highlighting to referred and aliased vars in Clojure buffers
-autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry " Evaluate Clojure buffers on load
-
-Plug 'kien/rainbow_parentheses.vim' " Better Rainbow Parentheses
-Plug 'tpope/vim-fireplace' " Clojure REPL support.
-"Plug 'tpope/vim-salve' " Static Vim support for Leiningen and Boot.
+  " Navigate errors with ctrl+j and ctrl+k
+  au Filetype go nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+  au Filetype go nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 "-------------------
 " Javascript/HTML/CSS
@@ -235,34 +226,29 @@ Plug 'othree/html5.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'cakebaker/scss-syntax.vim'
 
-"-------------------
-" PHP/Twig
-"-------------------
-Plug 'lumiliet/vim-twig'
-
-"-------------------
-" Perl
-"-------------------
-Plug 'vim-perl/vim-perl'
-let perl_fold = 1
-" let perl_nofold_subs = 1
-let perl_nofold_packages = 1
-let php_sql_query = 1
 
 " All of your Plugins must be added before the following line
 call plug#end()
+
+" This has to be called after plug#end
+call deoplete#custom#option('sources', { 'go': ['ale']}) " Currently only for Go, use ale as source
 
 "-------------------
 " General config
 "-------------------
 set ttimeout        " time out for key codes
-set ttimeoutlen=0 " wait up to 100ms after Esc for special key
+set ttimeoutlen=100 " wait up to 100ms after Esc for special key
+
+" Use <C-L> to clear the highlighting of :set hlsearch.
+if maparg('<C-L>', 'n') ==# ''
+  nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
+endif
 
 " Toggle if in OSx
 " let g:python2_host_prog = '/usr/local/bin/python'
 " let g:python3_host_prog = '/usr/local/bin/python3'
 
-set list listchars=tab:»·,trail:·,nbsp:· " Display extra whitespace
+" set list listchars=tab:»·,trail:·,nbsp:· " Display extra whitespace
 
 " Show trailing whitespace and spaces before a tab:
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -270,12 +256,13 @@ autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\\t/
 
 set foldmethod=syntax
 set nofoldenable " Files don't start folded
-set backspace=indent,eol,start
 set nosmartindent
 set autoindent
 set cursorline " highlight the current line the cursor is on
 set cuc cul    " highlight the current column the cursor is on
 
+set backspace=indent,eol,start
+" set backspace=2   " fix backspace (on some OS/terminals)
 set laststatus=2  " Shows the current status of the file.
 set expandtab     " Replaces a <TAB> with spaces
 set shiftwidth=2  " The amount to block indent when using < and >
@@ -297,9 +284,10 @@ set smartcase  " Overrides ignorecase if pattern contains upcase
 
 set showmatch "sm: flashes matching brackets or parentheses
 
-" Copy&Paste works with the system too. See: https://vim.fandom.com/wiki/Accessing_the_system_clipboard
-set clipboard=unnamedplus " In case of Linux
-" set clipboard=unnamed " This would be for OSx.
+" Copy&Paste works with the system too.
+" See: https://vim.fandom.com/wiki/Accessing_the_system_clipboard
+" set clipboard=unnamedplus " In case of Linux
+set clipboard=unnamed " This would be for OSx.
 
 
 " When scrolling off-screen do so 3 lines at a time, not 1
@@ -336,22 +324,3 @@ endif
 "-------------------
 " https://vim.fandom.com/wiki/Avoid_the_escape_key
 imap jj <Esc>
-
-" Don't complain on some obvious fat-fingers
-nmap :W :w
-nmap :W! :w!
-nmap :Q :q
-nmap :Q! :q!
-nmap :Qa :qa
-nmap :Wq! :wq!
-nmap :WQ! :wq!
-
-" Don't be a noob, join the no arrows key movement
-inoremap  <Up>     <NOP>
-inoremap  <Down>   <NOP>
-inoremap  <Left>   <NOP>
-inoremap  <Right>  <NOP>
-noremap   <Up>     <NOP>
-noremap   <Down>   <NOP>
-noremap   <Left>   <NOP>
-noremap   <Right>  <NOP>

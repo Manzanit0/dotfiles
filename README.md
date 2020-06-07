@@ -1,11 +1,17 @@
 # My dotfiles
 
-### Directories explained
+NOTE: The repo is currently broken. I'll repair it. Some day :)
 
-`src/` contains my dotfiles.
+Easy peasy, lemon squeezy:
 
-`scripts/` contains some utility scripts I like for everyday use.
+## MacOS
 
-`bin/brew-install` to install brew-cask and basic list of recipes and casks.
+```
+curl -s https://raw.githubusercontent.com/manzanit0/dotfiles/master/macos/setup.sh | bash
+```
 
-`bin/install` to install both brew recipes, dotfiles and scripts. The ultimate install script :)
+## Ubuntu
+
+```
+curl -s https://raw.githubusercontent.com/manzanit0/dotfiles/master/ubuntu/setup.sh | bash
+```
