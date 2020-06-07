@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install nvim with all the fancy stuff
 wget --quiet https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage --output-document nvim
 
