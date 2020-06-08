@@ -7,6 +7,11 @@ pushd ~/repositories/dotfiles/general
   && bash vscode.sh
 popd
 
+# let's make zsh the default
+apt install -y zsh
+chsh -s $(which zsh)
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 # Install DBeaver
 wget -O - https://dbeaver.io/debs/dbeaver.gpg.key | apt-key add -
 echo "deb https://dbeaver.io/debs/dbeaver-ce /" | tee /etc/apt/sources.list.d/dbeaver.list
