@@ -2,7 +2,7 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME=robbyrussell
 
-plugins=(git osx tmux github fasd history-substring-search zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git osx tmux github fasd history-substring-search)
 
 source $ZSH/oh-my-zsh.sh
 
