@@ -39,4 +39,8 @@ pushd ~/repositories/dotfiles/general
   && bash vscode.sh
 popd
 
+
+# as of Cataline, ZSH is the default shell, so we only need to bring OMZsh :)
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 echo "All done!"
