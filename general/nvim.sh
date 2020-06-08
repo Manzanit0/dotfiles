@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# NB: nvim has been installed by homebrew.
+# NB: nvim has been installed by homebrew or apt.
 
 # Link nvim config
 mkdir -p ~/.config/nvim

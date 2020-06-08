@@ -2,15 +2,9 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME=robbyrussell
 
-# Start up rbenv
-eval "$(rbenv init -)"
-
 plugins=(git osx tmux github fasd history-substring-search zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Enabled history for Elixir iex
 export ERL_AFLAGS="-kernel shell_history enabled"
@@ -20,6 +14,13 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
+
+# <asdf-config>
+. $HOME/.asdf/asdf.sh
+fpath=(${ASDF_DIR}/completions $fpath)
+autoload -Uz compinit
+compinit
+# </asdf-config>
 
 # Allow tmux work properly (hack?)
 alias tmux="TERM=screen-256color-bce tmux"
