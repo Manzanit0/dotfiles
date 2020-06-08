@@ -7,11 +7,11 @@ Easy peasy, lemon squeezy:
 ## MacOS
 
 ```
-curl -s https://raw.githubusercontent.com/manzanit0/dotfiles/master/macos/setup.sh | bash
+sudo curl -s https://raw.githubusercontent.com/manzanit0/dotfiles/master/macos/setup.sh | bash
 ```
 
 ## Ubuntu
 
 ```
-curl -s https://raw.githubusercontent.com/manzanit0/dotfiles/master/ubuntu/setup.sh | bash
+sudo curl -s https://raw.githubusercontent.com/manzanit0/dotfiles/master/ubuntu/setup.sh | bash
 ```

@@ -1,10 +1,27 @@
 #!/usr/bin/env bash
 
-# NB: nvim has been installed by homebrew or apt.
+# Install nvim with all the fancy stuff
+wget --quiet https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage --output-document nvim
+
+chmod +x nvim
+chown root:root nvim
+mv nvim /usr/bin
 
 # Link nvim config
 mkdir -p ~/.config/nvim
 echo "source ~/repositories/dotfiles/dotfiles/.nvimrc" > ~/.config/nvim/init.vim
+
+if [[ "$(uname)" == "Linux" ]]; then
+    apt-get install silversearcher-ag
+    apt-get install fzf
+
+    ## python modules for deoplete
+    # FIXME: Last time the came with Ubuntu out of the box
+    # apt install python3-pip
+    # apt install python-pip
+    # pip install --user neovim
+    # pip3 install --user neovim
+fi
 
 # This is needed for many plugins
 pip3 install neovim --upgrade

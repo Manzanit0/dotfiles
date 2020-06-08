@@ -34,8 +34,9 @@ popd
 
 pushd ~/repositories/dotfiles/general
   bash tmux.sh \
+  && bash asdf.sh \
   && bash nvim.sh \
-  && bash asdf.sh
+  && bash vscode.sh
 popd
 
 echo "All done!"

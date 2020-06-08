@@ -1,47 +1,11 @@
 #!/bin/bash
 
-# Install nvim with all the fancy stuff
-wget --quiet https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage --output-document nvim
-
-chmod +x nvim
-chown root:root nvim
-mv nvim /usr/bin
-
-cd ~
-mkdir -p .config/nvim
-
-## vim-plug for nvim
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-## python modules for deoplete
-apt install python3-pip
-apt install python-pip
-pip install --user neovim
-pip3 install --user neovim
-
-# AG - Silver Searcher
-apt-get install silversearcher-ag
-
-# FZF
-apt-get install fzf
-
-# Install VS Code + plugins
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/
-sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-
-apt-get install apt-transport-https
-apt-get update
-apt-get install code
-
-code --install-extension emmanuelbeziat.vscode-great-icons
-code --install-extension formulahendry.terminal
-code --install-extension gerane.Theme-FlatlandMonokai
-code --install-extension humao.rest-client
-code --install-extension mjmcloug.vscode-elixir
-code --install-extension saratravi.elixir-formatter
-code --install-extension techer.open-in-browser
-code --install-extension vscodevim.vim
+pushd ~/repositories/dotfiles/general
+  bash tmux.sh \
+  && bash asdf.sh \
+  && bash nvim.sh \
+  && bash vscode.sh
+popd
 
 # Install DBeaver
 wget -O - https://dbeaver.io/debs/dbeaver.gpg.key | apt-key add -

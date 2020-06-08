@@ -4,6 +4,10 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
 cd ~/.asdf
 git checkout "$(git describe --abbrev=0 --tags)"
 
+# I use zsh, but make it work in bash too for the odd day
+echo ". $HOME/.asdf/asdf.sh" > ~/.bashrc
+echo ". $HOME/.asdf/completions/asdf.bash" > ~/.bashrc
+
 # Go
 asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 asdf install golang 1.14.4

@@ -286,8 +286,8 @@ set showmatch "sm: flashes matching brackets or parentheses
 
 " Copy&Paste works with the system too.
 " See: https://vim.fandom.com/wiki/Accessing_the_system_clipboard
-" set clipboard=unnamedplus " In case of Linux
-set clipboard=unnamed " This would be for OSx.
+set clipboard=unnamedplus " In case of Linux
+" set clipboard=unnamed " This would be for OSx.
 
 
 " When scrolling off-screen do so 3 lines at a time, not 1
