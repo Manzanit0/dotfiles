@@ -167,19 +167,7 @@ let ruby_fold = 1
 let ruby_spellcheck_strings = 1
 
 "-------------------
-" Elixir
-"-------------------
-Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
-Plug 'slashmili/alchemist.vim' " Gotodef, autocomplete and tooling.
-let g:alchemist_tag_map = '<C-]>'
-let g:alchemist_tag_stack_map = '<C-[>'
-
-" TODO Add elixir support to ALE
-" https://github.com/dense-analysis/ale/blob/master/doc/ale-elixir.txt
-" https://github.com/elixir-lsp
-
-"-------------------
-" Go
+" ALE
 " -----------------
 Plug 'dense-analysis/ale'
   let g:ale_fix_on_save = 1
@@ -187,16 +175,6 @@ Plug 'dense-analysis/ale'
   let g:ale_lint_on_insert_leave = 0
   let g:ale_lint_on_text_changed = 0
   let g:ale_linters_explicit = 1
-  let g:ale_fixers = {
-        \   'go': ['goimports', 'gofmt'],
-        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-        \ }
-  let g:ale_linters = {
-        \   'go': ['gopls', 'golangci-lint'],
-        \ }
-  let g:ale_type_map = {
-        \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
-        \ }
   let g:ale_go_gofmt_options = '-s'
   let g:ale_lsp_show_message_severity = 'warning'
   let g:ale_sign_error = 'E'
@@ -205,16 +183,44 @@ Plug 'dense-analysis/ale'
   let g:ale_set_highlights = 0
   let g:ale_completion_enabled = 0 "Must be disabled so deoplete works
   set omnifunc=ale#completion#OmniFunc
-  set completeopt=menu,menuone,noinsert,noselect " noinsert and noselect are required for ALE to complete as you type
+  set completeopt=menu,menuone
 
-  " Some basic ALE navigating
-  au FileType go nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  au FileType go nnoremap <silent> <buffer> K :ALEHover<CR>
-  au FileType go nmap <F2> :ALEFindReferences<CR>
+  let g:ale_fixers = {
+        \   'go': ['goimports', 'gofmt'],
+        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \ }
+  let g:ale_linters = {
+        \   'go': ['gopls', 'golangci-lint'],
+        \   'elixir': ['elixir-ls'],
+        \ }
+  let g:ale_type_map = {
+        \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
+        \ }
 
-  " Navigate errors with ctrl+j and ctrl+k
-  au Filetype go nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-  au Filetype go nmap <silent> <C-j> <Plug>(ale_next_wrap)
+" Some basic ALE navigating
+nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+nnoremap <silent> <buffer> K :ALEHover<CR>
+nmap <F2> :ALEFindReferences<CR>
+
+" Navigate errors with ctrl+j and ctrl+k
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+"-------------------
+" Go
+" -----------------
+let g:ale_go_gofmt_options = '-s'
+
+"-------------------
+" Elixir
+"-------------------
+Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
+
+" Required, tell ALE where to find Elixir LS
+let g:ale_elixir_elixir_ls_release = expand("/home/manzanit0/repositories/elixir-ls/rel")
+
+" Optional, you can disable Dialyzer with this setting
+let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
 
 "-------------------
 " Javascript/HTML/CSS
@@ -231,7 +237,7 @@ Plug 'cakebaker/scss-syntax.vim'
 call plug#end()
 
 " This has to be called after plug#end
-call deoplete#custom#option('sources', { 'go': ['ale']}) " Currently only for Go, use ale as source
+call deoplete#custom#option('sources', { 'go': ['ale'], 'elixir': ['ale']})
 
 "-------------------
 " General config
