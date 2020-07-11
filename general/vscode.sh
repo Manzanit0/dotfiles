@@ -47,4 +47,4 @@ code --install-extension dms-vscode.js-debug-nightly
 code --install-extension dbaeumer.vscode-eslint
 
 # go
-code --install-extension dms-vscode.go
+code --install-extension golang.go
