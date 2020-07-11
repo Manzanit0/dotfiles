@@ -32,3 +32,13 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 
 # Install all plugins and update
 nvim +PlugInstall +UpdateRemotePlugins +qa
+
+
+# This is the Elixir language server needed for the Elixir setup in vim.
+git clone git@github.com:elixir-lsp/elixir-ls.git ~/repositories/elixir-ls
+pushd ~/repositories/elixir_ls
+  git checkout tags/v0.4.0
+  mix deps.get && mix compile
+  mkdir rel
+  mix elixir_ls.release -o rel
+popd
