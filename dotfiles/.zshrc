@@ -42,11 +42,21 @@ function deleteAllDockerImages() {
   docker rmi $(docker images -q)
 }
 
-function localpg {
+function pg-docker() {
   docker run --rm --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data postgres
 }
 
+function pg-stop() {
+  sudo /etc/init.d/postgresql stop
+}
+
+function pg-start() {
+  sudo /etc/init.d/postgresql start
+}
+
 # Rekki stuff
+export PATH=$PATH:/home/manzanit0/repositories/rekki/go/.bin
+
 function rekkifeat() {
   kubectl exec -ti svc/pgcli -n feat -- /bin/open.sh order
 }
@@ -54,3 +64,9 @@ function rekkifeat() {
 function rekkilive() {
   kubectl exec -ti svc/pgcli -n live -- /bin/open.sh order
 }
+
+function rincewind-connect() {
+  lftp ftp.rekki.com -u javier
+}
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
