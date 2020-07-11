@@ -7,6 +7,9 @@ pushd ~/repositories/dotfiles/general
   && bash vscode.sh
 popd
 
+# Node should come with asdf.sh
+npm install -g diff-so-fancy
+
 # let's make zsh the default
 apt install -y zsh
 chsh -s $(which zsh)
