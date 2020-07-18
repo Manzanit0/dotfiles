@@ -9,6 +9,12 @@ source $ZSH/oh-my-zsh.sh
 # Enabled history for Elixir iex
 export ERL_AFLAGS="-kernel shell_history enabled"
 
+# Invoke elixir help from terminal
+# Usage: `exdoc Enum.map`
+function exdoc {
+  elixir -e "require IEx.Helpers; IEx.Helpers.h($1)"
+}
+
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
