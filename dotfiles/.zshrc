@@ -38,6 +38,8 @@ export GOPATH=$(go env GOPATH)
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$(go env GOPATH)/bin
 
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
 # Some convenience function
 function deleteAllDockerContainers() {
   docker stop $(docker ps -aq)
