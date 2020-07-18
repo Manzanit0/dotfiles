@@ -196,14 +196,16 @@ Plug 'dense-analysis/ale'
         \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
         \ }
 
-" Some basic ALE navigating
-nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-nnoremap <silent> <buffer> K :ALEHover<CR>
-nmap <F2> :ALEFindReferences<CR>
+augroup ale_mappings
+  " Some basic ALE navigating
+  au FileType go,elixir nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  au FileType go,elixir nnoremap <silent> <buffer> K :ALEHover<CR>
+  au FileType go,elixir nmap <F2> :ALEFindReferences<CR>
 
-" Navigate errors with ctrl+j and ctrl+k
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+  " Navigate errors with ctrl+j and ctrl+k
+  au FileType go,elixir nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+  au FileType go,elixir nmap <silent> <C-j> <Plug>(ale_next_wrap)
+augroup END
 
 "-------------------
 " Go
