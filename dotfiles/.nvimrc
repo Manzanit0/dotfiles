@@ -7,7 +7,7 @@ filetype off                  " required
 let mapleader=" "
 
 " Quickly open/source .nvimrc in new tab
-nnoremap <leader>nc :tabedit ~/.config/nvim/init.vim<CR>
+nnoremap <leader>nc :tabedit ~/repositories/dotfiles/dotfiles/.nvimrc<CR>
 nnoremap <leader>nr :source ~/.config/nvim/init.vim<CR>
 
 " Buffer switching
