@@ -62,6 +62,10 @@ function pg-start() {
   sudo /etc/init.d/postgresql start
 }
 
+function find-pods {
+  kubectl get pods -n $1 -l name=$2
+}
+
 # Rekki stuff
 export PATH=$PATH:/home/manzanit0/repositories/rekki/go/.bin
 
@@ -78,3 +82,4 @@ function rincewind-connect() {
 }
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[[ /usr/bin/kubectl ]] && source <(kubectl completion zsh)
