@@ -142,7 +142,7 @@ let NERDTreeShowHidden=1
 " Git
 "-------------------
 Plug 'rbong/vim-flog'
-Plug 'tpope/vim-fugitive' " Git tools
+Plug 'tpope/vim-fugitive'
 set diffopt+=vertical
 
 Plug 'airblade/vim-gitgutter' " Shows a git diff in the gutter
@@ -152,18 +152,9 @@ let g:gitgutter_realtime = 1
 let g:gitgutter_eager = 1
 set updatetime=100
 
-"-------------------
-" Markdown
-"-------------------
-Plug 'suan/vim-instant-markdown'
-
-"-------------------
-" Ruby
-"-------------------
-Plug 'vim-ruby/vim-ruby' " Syntax highlighting for Ruby.
-Plug 'tpope/vim-endwise' " Adds closing tags for Ruby
-let ruby_fold = 1
-let ruby_spellcheck_strings = 1
+" Navigate git hunks
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
 
 "-------------------
 " ALE
