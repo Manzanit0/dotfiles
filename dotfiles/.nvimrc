@@ -14,21 +14,11 @@ nnoremap <leader>nr :source ~/.config/nvim/init.vim<CR>
 map <leader>p :bp<CR>
 map <leader>n :bn<CR>
 
-" Clear search results
-nmap <Leader><CR> :nohlsearch<cr>
-
 " Ctrl + r: rename over file
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 
-"-------------------------
-" Copied from nietaki-files
-"-------------------------
-
 " maximize the window
 nmap <Leader>wm <C-W>_ <C-W>\|
-
-" distribute the windows equally
-nnoremap <Leader>w= <C-W>=
 
 " save all open buffers
 nnoremap <Leader>ps :wa<CR>
@@ -42,44 +32,13 @@ nnoremap <Leader>fr :checktime<CR>
 " quit
 nnoremap <Leader>qq :qa<CR>
 
-" --hidden makes ag not skip the hidden files when searching
-let $FZF_DEFAULT_COMMAND = 'ag --hidden -g ""'
-
-" Configure :Ag to exclude file names. Search only contents.
-command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
-command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
-" Search file name with preview
-nmap <Leader>f/ :Files<CR>
-
-" Search file contents
-nmap <Leader>c/ :AgFuzzy<CR>
-
-" Search in current file's lines
-nmap <Leader>l/ :BLines<CR>
-
-" recent buffer history
-nnoremap <Leader>bh :CtrlPMRUFiles<CR>
-
 " absolute path (/something/src/foo.txt)
 nnoremap <leader>cF :let @+=expand("%:p")<CR>
 
 " relative path (src/foo.txt)
 nnoremap <leader>cf :let @+=expand("%")<CR>
 
-" fugitive shortcuts
-" Working with maps: https://github.com/tpope/vim-fugitive/blob/master/doc/fugitive.txt#L252
-nmap <Leader>gs :Gstatus<CR>
-nmap <Leader>gc :Gcommit<CR>
-" nmap <Leader>gp :Git shove<CR>
-nmap <Leader>gb :Gblame<CR>
-
-let g:flog_default_arguments = { 'max_count': 1000 }
-nmap <Leader>gl :Flog<CR>
-nmap <Leader>gL :Flogsplit<CR>
-
 "-------------------------
-"
 " General purpose plugins
 "-------------------------
 " set the runtime path to include Vundle and initialize
@@ -90,9 +49,6 @@ Plug 'sheerun/vim-polyglot' " Overall language support
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
 Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
-Plug 'kien/ctrlp.vim' " Fuzzy finder for files, etc.
-let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""' " requires ag installed!
-
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
 
@@ -100,6 +56,33 @@ Plug 'sbdchd/neoformat'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+
+" Map it to ctrl+p and leader+s
+nnoremap <C-p> :<C-u>FZF<CR>
+nnoremap <leader>s :<C-u>FZF<CR>
+
+" Configure fzf so shortcuts match with vim split defaults
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+" --hidden makes ag not skip the hidden files when searching
+let $FZF_DEFAULT_COMMAND = 'ag --hidden -g ""'
+
+" Configure :Ag to exclude file names. Search only contents.
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
+" Search file name with preview
+nmap <Leader>f :Files<CR>
+
+" Search file contents
+nmap <Leader>c :AgFuzzy<CR>
+
+" Search in current file's lines
+nmap <Leader>l :BLines<CR>
+
 Plug 'wesQ3/vim-windowswap'
 
 Plug 'junegunn/goyo.vim'
@@ -146,6 +129,17 @@ let NERDTreeShowHidden=1
 Plug 'rbong/vim-flog'
 Plug 'tpope/vim-fugitive'
 set diffopt+=vertical
+
+" fugitive shortcuts
+" Working with maps: https://github.com/tpope/vim-fugitive/blob/master/doc/fugitive.txt#L252
+nmap <Leader>gs :Gstatus<CR>
+nmap <Leader>gc :Gcommit<CR>
+nmap <Leader>gp :Git shove<CR>
+nmap <Leader>gb :Gblame<CR>
+
+let g:flog_default_arguments = { 'max_count': 1000 }
+nmap <Leader>gl :Flog<CR>
+nmap <Leader>gL :Flogsplit<CR>
 
 Plug 'airblade/vim-gitgutter' " Shows a git diff in the gutter
 let g:gitgutter_enabled = 1
