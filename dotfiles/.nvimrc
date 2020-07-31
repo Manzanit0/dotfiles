@@ -215,6 +215,27 @@ let g:ale_elixir_elixir_ls_release = expand("/home/manzanit0/repositories/elixir
 let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
 
 "-------------------
+" .NET
+" -----------------
+Plug 'OmniSharp/omnisharp-vim'
+" OmniSharpGotoDefinition doesn't populate the tag stack...
+Plug 'idbrii/vim-tagimposter'
+let g:OmniSharp_highlighting = 0
+
+augroup omnisharp_mappings
+  au FileType cs nnoremap <silent> <buffer> <C-]> :<C-u> TagImposterAnticipateJump <Bar> OmniSharpGotoDefinition<CR>
+  au FileType cs nnoremap <silent> <buffer> <C-K> :OmniSharpPreviewDefinition<CR>
+  au FileType cs nmap <F2> :OmniSharpFindUsages<CR>
+  au FileType cs nmap <F3> :OmniSharpRename<CR>
+
+  au FileType cs nmap <silent> <buffer> [[ <Plug>(omnisharp_navigate_up)
+  au FileType cs nmap <silent> <buffer> ]] <Plug>(omnisharp_navigate_down)
+
+  au FileType cs nnoremap <silent> <buffer> <C-'> :OmniSharpRunTest<CR>
+  au FileType cs nnoremap <silent> <buffer> <C-> :OmniSharpGetCodeActions<CR>
+augroup END
+
+"-------------------
 " Javascript/HTML/CSS
 "-------------------
 " Plug 'pangloss/vim-javascript'
