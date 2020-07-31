@@ -177,11 +177,13 @@ Plug 'dense-analysis/ale'
 
   let g:ale_fixers = {
         \   'go': ['goimports', 'gofmt'],
+        \   'elixir': ['mix_format'],
         \   '*': ['remove_trailing_lines', 'trim_whitespace'],
         \ }
   let g:ale_linters = {
         \   'go': ['gopls', 'golangci-lint'],
         \   'elixir': ['elixir-ls'],
+        \   'cs': ['OmniSharp'],
         \ }
   let g:ale_type_map = {
         \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
@@ -190,7 +192,7 @@ Plug 'dense-analysis/ale'
 augroup ale_mappings
   " Some basic ALE navigating
   au FileType go,elixir nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  au FileType go,elixir nnoremap <silent> <buffer> K :ALEHover<CR>
+  au FileType go,elixir nnoremap <silent> <buffer> <C-K> :ALEHover<CR>
   au FileType go,elixir nmap <F2> :ALEFindReferences<CR>
 
   " Navigate errors with ctrl+j and ctrl+k
