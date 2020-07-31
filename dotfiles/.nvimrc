@@ -110,7 +110,9 @@ let g:deoplete#enable_at_startup = 1
 " Vimux
 "-------------------
 Plug 'benmills/vimux' " Easy interaction with tmux
-map <Leader>q :call VimuxRunCommand("clear; mix test " . bufname("%"))<CR>
+let g:VimuxUseNearest = 0
+map <Leader>te :call VimuxRunCommand("clear; mix test " . bufname("%"))<CR>
+map <Leader>tg :call VimuxRunCommand("clear; go test " . expand("%:p:h"))<CR>
 
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
