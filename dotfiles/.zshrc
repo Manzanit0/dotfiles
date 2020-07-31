@@ -69,17 +69,27 @@ function find-pods {
 # Rekki stuff
 export PATH=$PATH:/home/manzanit0/repositories/rekki/go/.bin
 
-function rekkifeat() {
+function rekkifeat {
   kubectl exec -ti svc/pgcli -n feat -- /bin/open.sh order
 }
 
-function rekkilive() {
+function rekkilive {
   kubectl exec -ti svc/pgcli -n live -- /bin/open.sh order
 }
 
-function rincewind-connect() {
+function rincewind-connect {
   lftp ftp.rekki.com -u javier
 }
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [[ /usr/bin/kubectl ]] && source <(kubectl completion zsh)
+
+alias dict="dict -d wn"
+alias httpry="httpry -f timestamp,dest-ip,direction,method,status-code,host,request-uri"
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/serverless.zsh ]] && . /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/sls.zsh ]] && . /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/sls.zsh
