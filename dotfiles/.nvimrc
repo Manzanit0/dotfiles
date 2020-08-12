@@ -57,6 +57,7 @@ Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
 Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
+Plug 'gcmt/taboo.vim'
 
 Plug 'sbdchd/neoformat'
 
@@ -92,6 +93,8 @@ nmap <Leader>l :BLines<CR>
 Plug 'wesQ3/vim-windowswap'
 
 Plug 'junegunn/goyo.vim'
+" g:goyo_width = 150
+
 Plug 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
 let g:deoplete#enable_at_startup = 1
 
@@ -235,7 +238,7 @@ augroup omnisharp_mappings
   au FileType cs nmap <silent> <buffer> [[ <Plug>(omnisharp_navigate_up)
   au FileType cs nmap <silent> <buffer> ]] <Plug>(omnisharp_navigate_down)
 
-  au FileType cs nnoremap <silent> <buffer> <C-'> :OmniSharpRunTest<CR>
+  au FileType cs nmap <F4> :OmniSharpRunTest<CR>
   au FileType cs nnoremap <silent> <buffer> <C-> :OmniSharpGetCodeActions<CR>
 augroup END
 
