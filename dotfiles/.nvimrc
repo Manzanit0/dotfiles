@@ -14,6 +14,9 @@ nnoremap <leader>nr :source ~/.config/nvim/init.vim<CR>
 map <leader>p :bp<CR>
 map <leader>n :bn<CR>
 
+" In case you use :terminal, bring back ESC
+:tnoremap <Esc> <C-\><C-n>
+
 " Ctrl + r: rename over file
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 
