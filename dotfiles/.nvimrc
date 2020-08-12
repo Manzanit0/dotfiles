@@ -41,6 +41,9 @@ nnoremap <leader>cF :let @+=expand("%:p")<CR>
 " relative path (src/foo.txt)
 nnoremap <leader>cf :let @+=expand("%")<CR>
 
+" :IX commands copies full file to ix.io, and places the URL in the clipboard
+command! -range=% IX  <line1>,<line2>w !curl -F 'f:1=<-' ix.io | tr -d '\n' | xclip -i -selection clipboard
+
 "-------------------------
 " General purpose plugins
 "-------------------------
