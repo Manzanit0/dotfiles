@@ -20,21 +20,6 @@ map <leader>n :bn<CR>
 " Ctrl + r: rename over file
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 
-" maximize the window
-nmap <Leader>wm <C-W>_ <C-W>\|
-
-" save all open buffers
-nnoremap <Leader>ps :wa<CR>
-
-" refresh the currently edited file from disk
-nnoremap <Leader>fR :e!<CR>
-
-" https://vi.stackexchange.com/questions/458/how-can-i-reload-all-buffers-at-once
-nnoremap <Leader>fr :checktime<CR>
-
-" quit
-nnoremap <Leader>qq :qa<CR>
-
 " absolute path (/something/src/foo.txt)
 nnoremap <leader>cF :let @+=expand("%:p")<CR>
 
@@ -43,6 +28,12 @@ nnoremap <leader>cf :let @+=expand("%")<CR>
 
 " :IX commands copies full file to ix.io, and places the URL in the clipboard
 command! -range=% IX  <line1>,<line2>w !curl -F 'f:1=<-' ix.io | tr -d '\n' | xclip -i -selection clipboard
+
+" quit
+nnoremap <Leader>qq :qa<CR>
+
+" maximize the window
+nmap <Leader>wm <C-W>_ <C-W>\|
 
 "-------------------------
 " General purpose plugins
@@ -54,12 +45,16 @@ Plug 'crusoexia/vim-monokai' " Color theme
 Plug 'sheerun/vim-polyglot' " Overall language support
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
+let g:airline_powerline_fonts = 1
+let g:airline_theme='ayu_dark'
+
 Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
-Plug 'gcmt/taboo.vim'
 
-Plug 'sbdchd/neoformat'
+Plug 'gcmt/taboo.vim'
+map <leader>tn :TabooOpen
+map <leader>tr :TabooRename
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -111,26 +106,13 @@ map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vq :VimuxCloseRunner<CR>
 
 "-------------------
-" NerdTree
+" Directory management
 "-------------------
-Plug 'scrooloose/nerdtree' " File explorer
-
-" close nerdtree when you open a file
-let NERDTreeQuitOnOpen = 1
-
-" delete the buffer when you delete a file
-let NERDTreeAutoDeleteBuffer = 1
-map <C-\> :NERDTreeToggle<CR>
-
-" opens the current file in nerdtree
-map <C-o> :NERDTreeFind<CR>
-
-" Shuts vim if NerdTree is the last window left
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-" Starts NERDTree at the start.
-autocmd vimenter * NERDTree
-let NERDTreeShowHidden=1
+Plug 'justinmk/vim-dirvish'
+Plug 'kristijanhusak/vim-dirvish-git'
+let g:dirvish_mode = ':sort ,^.*[\/],'
+map <C-\> :Dirvish<CR>
+" TODO https://github.com/fsharpasharp/vim-dirvinist
 
 "-------------------
 " Git
@@ -165,6 +147,7 @@ nmap [h <Plug>(GitGutterPrevHunk)
 " ALE
 " -----------------
 Plug 'dense-analysis/ale'
+  let g:ale_open_list = 1
   let g:ale_fix_on_save = 1
   let g:ale_lint_on_save = 1
   let g:ale_lint_on_insert_leave = 0
@@ -183,11 +166,20 @@ Plug 'dense-analysis/ale'
   let g:ale_fixers = {
         \   'go': ['goimports', 'gofmt'],
         \   'elixir': ['mix_format'],
+        \   'javascript': ['prettier'],
+        \   'javascriptreact': ['prettier'],
+        \   'typescript': ['prettier'],
+        \   'typescriptreact': ['prettier'],
         \   '*': ['remove_trailing_lines', 'trim_whitespace'],
         \ }
   let g:ale_linters = {
         \   'go': ['gopls', 'golangci-lint'],
         \   'elixir': ['elixir-ls'],
+        \   'javascript': ['tsserver'],
+        \   'javascriptreact': ['tsserver'],
+        \   'typescript': ['tsserver'],
+        \   'typescriptreact': ['tsserver'],
+        \   'sql': ['sqlint'],
         \   'cs': ['OmniSharp'],
         \ }
   let g:ale_type_map = {
@@ -196,19 +188,20 @@ Plug 'dense-analysis/ale'
 
 augroup ale_mappings
   " Some basic ALE navigating
-  au FileType go,elixir nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  au FileType go,elixir nnoremap <silent> <buffer> <C-K> :ALEHover<CR>
-  au FileType go,elixir nmap <F2> :ALEFindReferences<CR>
+  au FileType go,elixir,javascript,typescript nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  au FileType go,elixir,javascript,typescript nnoremap <silent> <buffer> <C-K> :ALEHover<CR>
+  au FileType go,elixir,javascript,typescript nmap <F2> :ALEFindReferences<CR>
 
   " Navigate errors with ctrl+j and ctrl+k
-  au FileType go,elixir nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-  au FileType go,elixir nmap <silent> <C-j> <Plug>(ale_next_wrap)
+  au FileType go,elixir,javascript,typescript nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+  au FileType go,elixir,javascript,typescript nmap <silent> <C-j> <Plug>(ale_next_wrap)
 augroup END
 
 "-------------------
 " Go
 " -----------------
 let g:ale_go_gofmt_options = '-s'
+let g:ale_go_golangci_lint_package = 1
 
 "-------------------
 " Elixir
@@ -242,21 +235,11 @@ augroup omnisharp_mappings
   au FileType cs nnoremap <silent> <buffer> <C-> :OmniSharpGetCodeActions<CR>
 augroup END
 
-"-------------------
-" Javascript/HTML/CSS
-"-------------------
-" Plug 'pangloss/vim-javascript'
-" Plug 'mxw/vim-jsx'
-" Plug 'elzr/vim-json'
-" Plug 'othree/html5.vim'
-" Plug 'hail2u/vim-css3-syntax'
-" Plug 'cakebaker/scss-syntax.vim'
-
 " All of your Plugins must be added before the following line
 call plug#end()
 
 " This has to be called after plug#end
-call deoplete#custom#option('sources', { 'go': ['ale'], 'elixir': ['ale']})
+call deoplete#custom#option('sources', { 'go': ['ale'], 'elixir': ['ale'], 'typescript': ['ale']})
 
 "-------------------
 " General config
@@ -278,6 +261,16 @@ endif
 " Show trailing whitespace and spaces before a tab:
 highlight ExtraWhitespace ctermbg=red guibg=red
 autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\\t/
+
+" copy from the cursor to the end of line using Y (matches D behavior)
+nnoremap <silent> Y y$
+
+" keep the cursor in place while joining lines
+nnoremap <silent> J mZJ`Z
+
+" performance
+set lazyredraw " only redraw when needed
+if exists('&ttyfast') | set ttyfast | endif " we have a fast terminal
 
 set foldmethod=syntax
 set nofoldenable " Files don't start folded
@@ -325,6 +318,18 @@ set splitright
 " Highlights with a small shadow all code surpassing 80 characters.
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%81v.\+/
+
+set wildignorecase " ignore case in file completion
+set wildignore= " remove default ignores
+set wildignore+=*.o,*.obj,*.so,*.a,*.dylib,*.pyc,*.hi " ignore compiled files
+set wildignore+=*.zip,*.gz,*.xz,*.tar,*.rar " ignore compressed files
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/* " ignore SCM files
+set wildignore+=*.png,*.jpg,*.jpeg,*.gif " ignore image files
+set wildignore+=*.pdf,*.dmg " ignore binary files
+set wildignore+=.*.sw*,*~ " ignore editor files
+set wildignore+=.DS_Store " ignore OS files
+set wildmenu " better command line completion menu
+set wildmode=full " ensure better completion
 
 "-------------------
 " Colors
