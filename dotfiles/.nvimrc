@@ -42,11 +42,12 @@ nmap <Leader>wm <C-W>_ <C-W>\|
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'crusoexia/vim-monokai' " Color theme
+Plug 'arcticicestudio/nord-vim'
 Plug 'sheerun/vim-polyglot' " Overall language support
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
 let g:airline_powerline_fonts = 1
-let g:airline_theme='ayu_dark'
+let g:airline_theme='nord'
 
 Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
