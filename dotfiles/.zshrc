@@ -29,8 +29,8 @@ compinit
 # </asdf-config>
 
 # Allow tmux work properly (hack?)
-alias tmux="TERM=screen-256color-bce tmux"
-set -g default-terminal "screen-256color"
+# alias tmux="TERM=screen-256color-bce tmux"
+export TERM="screen-256color"
 
 # GOPATH :)
 export GOROOT=$(go env GOROOT)
@@ -39,6 +39,11 @@ export GOBIN=$GOPATH/bin
 export PATH=$PATH:$(go env GOPATH)/bin
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+# <deno>
+export DENO_INSTALL="/home/manzanit0/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+# </deno>
 
 # Some convenience function
 function deleteAllDockerContainers() {
@@ -66,26 +71,29 @@ function find-pods {
   kubectl get pods -n $1 -l name=$2
 }
 
-# Rekki stuff
-export PATH=$PATH:/home/manzanit0/repositories/rekki/go/.bin
-
-function rekkifeat {
-  kubectl exec -ti svc/pgcli -n feat -- /bin/open.sh order
+function find-service-version {
+  kubectl describe -n $1 deploy/$2 | grep Imag
 }
 
-function rekkilive {
-  kubectl exec -ti svc/pgcli -n live -- /bin/open.sh order
-}
-
-function rincewind-connect {
-  lftp ftp.rekki.com -u javier
-}
+eval "$(direnv hook zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [[ /usr/bin/kubectl ]] && source <(kubectl completion zsh)
 
+# Default dict already
 alias dict="dict -d wn"
+
+# Default style
 alias httpry="httpry -f timestamp,dest-ip,direction,method,status-code,host,request-uri"
+
+# I only use VSCode to open projects, not files.
+alias code="code ."
+
+function kc {
+  cd ~/settld/kc-api
+  source .envrc
+  code
+}
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
