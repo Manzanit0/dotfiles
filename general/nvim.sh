@@ -35,9 +35,10 @@ nvim +PlugInstall +UpdateRemotePlugins +qa
 
 
 # This is the Elixir language server needed for the Elixir setup in vim.
+# git clone git@github.com:elixir-lsp/elixir-ls.git ~/.elixir-ls && cd ~/.elixir-ls && git checkout tags/v0.6.2 && mix do deps.get, compile, elixir_ls.release -o rel
 git clone git@github.com:elixir-lsp/elixir-ls.git ~/repositories/elixir-ls
 pushd ~/repositories/elixir_ls
-  git checkout tags/v0.4.0
+  git checkout tags/v0.7.0
   mix deps.get && mix compile
   mkdir rel
   mix elixir_ls.release -o rel

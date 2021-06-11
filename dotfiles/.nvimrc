@@ -47,7 +47,7 @@ Plug 'sheerun/vim-polyglot' " Overall language support
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
 let g:airline_powerline_fonts = 1
-let g:airline_theme='nord'
+" let g:airline_theme='nord'
 
 Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
@@ -166,7 +166,6 @@ Plug 'dense-analysis/ale'
 
   let g:ale_fixers = {
         \   'go': ['goimports', 'gofmt'],
-        \   'elixir': ['mix_format'],
         \   'javascript': ['prettier'],
         \   'javascriptreact': ['prettier'],
         \   'typescript': ['prettier'],
@@ -175,7 +174,6 @@ Plug 'dense-analysis/ale'
         \ }
   let g:ale_linters = {
         \   'go': ['gopls', 'golangci-lint'],
-        \   'elixir': ['elixir-ls'],
         \   'javascript': ['tsserver'],
         \   'javascriptreact': ['tsserver'],
         \   'typescript': ['tsserver'],
@@ -189,14 +187,41 @@ Plug 'dense-analysis/ale'
 
 augroup ale_mappings
   " Some basic ALE navigating
-  au FileType go,elixir,javascript,typescript nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  au FileType go,elixir,javascript,typescript nnoremap <silent> <buffer> <C-K> :ALEHover<CR>
-  au FileType go,elixir,javascript,typescript nmap <F2> :ALEFindReferences<CR>
+  au FileType go,javascript,typescript nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  au FileType go,javascript,typescript nnoremap <silent> <buffer> <C-K> :ALEHover<CR>
+  au FileType go,javascript,typescript nmap <F2> :ALEFindReferences<CR>
 
   " Navigate errors with ctrl+j and ctrl+k
-  au FileType go,elixir,javascript,typescript nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-  au FileType go,elixir,javascript,typescript nmap <silent> <C-j> <Plug>(ale_next_wrap)
+  au FileType go,javascript,typescript nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+  au FileType go,javascript,typescript nmap <silent> <C-j> <Plug>(ale_next_wrap)
 augroup END
+
+
+"-------------------
+" Built-in LSP
+" -----------------
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-compe'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+
+"-------------------
+" Telescope
+" -----------------
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+"-------------------
+" Treesitter
+" -----------------
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "-------------------
 " Go
@@ -207,13 +232,8 @@ let g:ale_go_golangci_lint_package = 1
 "-------------------
 " Elixir
 "-------------------
-Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
-
-" Required, tell ALE where to find Elixir LS
-let g:ale_elixir_elixir_ls_release = expand("/home/manzanit0/repositories/elixir-ls/rel")
-
-" Optional, you can disable Dialyzer with this setting
-let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
+" Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
+imap fpp \|><space>
 
 "-------------------
 " .NET
@@ -239,8 +259,87 @@ augroup END
 " All of your Plugins must be added before the following line
 call plug#end()
 
+lua << EOF
+local lspconfig = require("lspconfig")
+
+-- Neovim doesn't support snippets out of the box, so we need to mutate the
+-- capabilities we send to the language server to let them know we want snippets.
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- Setup our autocompletion. These configuration options are the default ones
+-- copied out of the documentation.
+require "compe".setup {
+  enabled = true,
+  autocomplete = true,
+  debug = false,
+  min_length = 1,
+  preselect = "disabled",
+  throttle_time = 80,
+  source_timeout = 200,
+  incomplete_delay = 400,
+  max_abbr_width = 100,
+  max_kind_width = 100,
+  max_menu_width = 100,
+  documentation = true,
+  source = {
+    path = true,
+    buffer = true,
+    calc = true,
+    vsnip = true,
+    nvim_lsp = true,
+    nvim_lua = true,
+    spell = true,
+    tags = true,
+    treesitter = true
+  }
+}
+
+-- A callback that will get called when a buffer connects to the language server.
+-- Here we create any key maps that we want to have on that buffer.
+local on_attach = function(_, bufnr)
+  local function map(...)
+    vim.api.nvim_buf_set_keymap(bufnr, ...)
+  end
+
+  local map_opts = {noremap = true, silent = true}
+
+  map("n", "df", "<cmd>lua vim.lsp.buf.formatting()<cr>", map_opts)
+  map("n", "gd", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", map_opts)
+  map("n", "dt", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
+  map("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
+  map("n", "<c-k>", "<cmd>lua vim.lsp.buf.hover()<cr>", map_opts)
+  map("n", "gD", "<cmd>lua vim.lsp.buf.implementation()<cr>", map_opts)
+  -- map("n", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>", map_opts)
+  map("n", "1gD", "<cmd>lua vim.lsp.buf.type_definition()<cr>", map_opts)
+  map("n", "gr", "<cmd>lua require'telescope.builtin'.lsp_references{}<cr>", map_opts)
+  map("n", "g0", "<cmd>lua require'telescope.builtin'.lsp_document_symbols{}<cr>", map_opts)
+  map("n", "gW", "<cmd>lua require'telescope.builtin'.lsp_workspace_symbols{}<cr>", map_opts)
+end
+
+lspconfig.elixirls.setup({
+  cmd = {vim.fn.expand("~/.elixir-ls/release/language_server.sh")},
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    elixirLS = {
+      dialyzerEnabled = false,
+      fetchDeps = false
+    }
+  }
+})
+EOF
+
+" Configure the tree sitter
+lua <<EOF
+require("nvim-treesitter.configs").setup {
+  highlight = {enable = true},
+  indent = {enable = true}
+}
+EOF
+
 " This has to be called after plug#end
-call deoplete#custom#option('sources', { 'go': ['ale'], 'elixir': ['ale'], 'typescript': ['ale']})
+call deoplete#custom#option('sources', { 'go': ['ale'], 'typescript': ['ale']})
 
 "-------------------
 " General config
@@ -254,8 +353,8 @@ if maparg('<C-L>', 'n') ==# ''
 endif
 
 " Toggle if in OSx
-" let g:python2_host_prog = '/usr/local/bin/python'
-" let g:python3_host_prog = '/usr/local/bin/python3'
+" let g:python2_host_prog = '/usr/bin/python'
+" let g:python3_host_prog = '/usr/bin/python3'
 
 " set list listchars=tab:»·,trail:·,nbsp:· " Display extra whitespace
 
@@ -341,14 +440,14 @@ colorscheme nord
 
 if (has("nvim"))
   "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-  " let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 endif
 
 "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
 "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
 " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
 if (has("termguicolors"))
-  " set termguicolors
+  set termguicolors
 endif
 
 "-------------------
