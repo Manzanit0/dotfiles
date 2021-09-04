@@ -68,7 +68,6 @@ casks=(
   'slack'
   'telegram'
   'visual-studio-code'
-  'intellij-idea-ce' 
   'bitwarden'
   'spotify'
 )
@@ -82,5 +81,5 @@ for formula in "${formulas[@]}"; do
 done
 
 for cask in "${casks[@]}"; do
-  brew cask install "$cask"
+  brew install --cask "$cask"
 done
