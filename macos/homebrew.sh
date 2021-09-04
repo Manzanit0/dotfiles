@@ -51,6 +51,7 @@ formulas=(
   'tree'
   'vim --override-system-vi --with-python3'
   'wget'
+  'deno'
 )
 
 casks=(
