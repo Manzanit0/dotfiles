@@ -56,11 +56,9 @@ formulas=(
 
 casks=(
   'alfred'
-  'caffeine'
   'docker'
   'firefox'
   'google-chrome'
-  'flux'
   'postman'
   'iterm2'
   'java'
@@ -68,8 +66,10 @@ casks=(
   'slack'
   'telegram'
   'visual-studio-code'
-  'bitwarden'
   'spotify'
+  'authy'
+  'rectangle'
+  'zoom'
 )
 
 for tap in "${taps[@]}"; do
