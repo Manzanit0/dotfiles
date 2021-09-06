@@ -66,15 +66,18 @@ function find-pods {
   kubectl get pods -n $1 -l name=$2
 }
 
+function uuid {
+  uuidgen | tr '[:upper:]' '[:lower:]'
+}
+
+function source-dotnenv {
+  set -o allexport
+  source .env
+  set +o allexport
+}
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [[ /usr/bin/kubectl ]] && source <(kubectl completion zsh)
 
 alias dict="dict -d wn"
 alias httpry="httpry -f timestamp,dest-ip,direction,method,status-code,host,request-uri"
-
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[[ -f /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/serverless.zsh ]] && . /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/serverless.zsh
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[[ -f /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/sls.zsh ]] && . /home/manzanit0/repositories/rekki/unity/node_modules/tabtab/.completions/sls.zsh
