@@ -2,10 +2,24 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME=robbyrussell
 
-plugins=(git osx tmux github fasd history-substring-search)
+plugins=(git osx tmux github fasd history-substring-search asdf)
+
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+  autoload -Uz compinit
+  compinit
+fi
 
 source $ZSH/oh-my-zsh.sh
 
+if type asdf &>/dev/null; then
+  . $HOME/.asdf/asdf.sh
+  fpath=(${ASDF_DIR}/completions $fpath)
+
+  autoload -Uz compinit
+  compinit
+fi
 eval "$(direnv hook zsh)"
 
 # Enabled history for Elixir iex
@@ -22,13 +36,6 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
-
-# <asdf-config>
-. $HOME/.asdf/asdf.sh
-fpath=(${ASDF_DIR}/completions $fpath)
-autoload -Uz compinit
-compinit
-# </asdf-config>
 
 # Allow tmux work properly (hack?)
 alias tmux="TERM=screen-256color-bce tmux"
@@ -79,7 +86,6 @@ function source-dotnenv {
 }
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-[[ /usr/bin/kubectl ]] && source <(kubectl completion zsh)
 
 alias dict="dict -d wn"
 alias httpry="httpry -f timestamp,dest-ip,direction,method,status-code,host,request-uri"
