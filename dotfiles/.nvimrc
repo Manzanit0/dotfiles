@@ -4,10 +4,10 @@ filetype off                  " required
 "-------------------
 " Leader mappings
 "-------------------
-let mapleader=" "
+let mapleader=";"
 
 " Quickly open/source .nvimrc in new tab
-nnoremap <leader>nc :tabedit ~/repositories/dotfiles/dotfiles/.nvimrc<CR>
+nnoremap <leader>nc :tabedit ~/.config/nvim/init.vim<CR>
 nnoremap <leader>nr :source ~/.config/nvim/init.vim<CR>
 
 " Buffer switching
@@ -42,11 +42,12 @@ nmap <Leader>wm <C-W>_ <C-W>\|
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'crusoexia/vim-monokai' " Color theme
+Plug 'arcticicestudio/nord-vim'
 Plug 'sheerun/vim-polyglot' " Overall language support
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
-let g:airline_powerline_fonts = 1
-let g:airline_theme='ayu_dark'
+" let g:airline_powerline_fonts = 1
+" let g:airline_theme='nord'
 
 Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
@@ -70,7 +71,7 @@ let g:fzf_action = {
   \ 'ctrl-v': 'vsplit' }
 
 " --hidden makes ag not skip the hidden files when searching
-let $FZF_DEFAULT_COMMAND = 'ag --hidden -g ""'
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git/"'
 
 " Configure :Ag to exclude file names. Search only contents.
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
@@ -85,13 +86,13 @@ nmap <Leader>c :AgFuzzy<CR>
 " Search in current file's lines
 nmap <Leader>l :BLines<CR>
 
-Plug 'wesQ3/vim-windowswap'
-
-Plug 'junegunn/goyo.vim'
+" Plug 'wesQ3/vim-windowswap'
+"
+" Plug 'junegunn/goyo.vim'
 " g:goyo_width = 150
 
-Plug 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
-let g:deoplete#enable_at_startup = 1
+" Plug 'Shougo/deoplete.nvim' " Dark powered asynchronous completion framework
+" let g:deoplete#enable_at_startup = 1
 
 "-------------------
 " Vimux
@@ -143,103 +144,146 @@ set updatetime=100
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
-"-------------------
-" ALE
-" -----------------
-Plug 'dense-analysis/ale'
-  let g:ale_open_list = 1
-  let g:ale_fix_on_save = 1
-  let g:ale_lint_on_save = 1
-  let g:ale_lint_on_insert_leave = 0
-  let g:ale_lint_on_text_changed = 0
-  let g:ale_linters_explicit = 1
-  let g:ale_go_gofmt_options = '-s'
-  let g:ale_lsp_show_message_severity = 'warning'
-  let g:ale_sign_error = 'E'
-  let g:ale_sign_warning = 'W'
-  let g:ale_sign_info = 'I'
-  let g:ale_set_highlights = 0
-  let g:ale_completion_enabled = 0 "Must be disabled so deoplete works
-  set omnifunc=ale#completion#OmniFunc
-  set completeopt=menu,menuone
-
-  let g:ale_fixers = {
-        \   'go': ['goimports', 'gofmt'],
-        \   'elixir': ['mix_format'],
-        \   'javascript': ['prettier'],
-        \   'javascriptreact': ['prettier'],
-        \   'typescript': ['prettier'],
-        \   'typescriptreact': ['prettier'],
-        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-        \ }
-  let g:ale_linters = {
-        \   'go': ['gopls', 'golangci-lint'],
-        \   'elixir': ['elixir-ls'],
-        \   'javascript': ['tsserver'],
-        \   'javascriptreact': ['tsserver'],
-        \   'typescript': ['tsserver'],
-        \   'typescriptreact': ['tsserver'],
-        \   'sql': ['sqlint'],
-        \   'cs': ['OmniSharp'],
-        \ }
-  let g:ale_type_map = {
-        \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
-        \ }
-
-augroup ale_mappings
-  " Some basic ALE navigating
-  au FileType go,elixir,javascript,typescript nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  au FileType go,elixir,javascript,typescript nnoremap <silent> <buffer> <C-K> :ALEHover<CR>
-  au FileType go,elixir,javascript,typescript nmap <F2> :ALEFindReferences<CR>
-
-  " Navigate errors with ctrl+j and ctrl+k
-  au FileType go,elixir,javascript,typescript nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-  au FileType go,elixir,javascript,typescript nmap <silent> <C-j> <Plug>(ale_next_wrap)
-augroup END
 
 "-------------------
-" Go
+" Built-in LSP
 " -----------------
-let g:ale_go_gofmt_options = '-s'
-let g:ale_go_golangci_lint_package = 1
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-compe'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+
+"-------------------
+" Telescope
+" -----------------
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+"-------------------
+" Treesitter
+" -----------------
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "-------------------
 " Elixir
 "-------------------
-Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
-
-" Required, tell ALE where to find Elixir LS
-let g:ale_elixir_elixir_ls_release = expand("/home/manzanit0/repositories/elixir-ls/rel")
-
-" Optional, you can disable Dialyzer with this setting
-let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
-
-"-------------------
-" .NET
-" -----------------
-Plug 'OmniSharp/omnisharp-vim'
-" OmniSharpGotoDefinition doesn't populate the tag stack...
-Plug 'idbrii/vim-tagimposter'
-let g:OmniSharp_highlighting = 0
-
-augroup omnisharp_mappings
-  au FileType cs nnoremap <silent> <buffer> <C-]> :<C-u> TagImposterAnticipateJump <Bar> OmniSharpGotoDefinition<CR>
-  au FileType cs nnoremap <silent> <buffer> <C-K> :OmniSharpPreviewDefinition<CR>
-  au FileType cs nmap <F2> :OmniSharpFindUsages<CR>
-  au FileType cs nmap <F3> :OmniSharpRename<CR>
-
-  au FileType cs nmap <silent> <buffer> [[ <Plug>(omnisharp_navigate_up)
-  au FileType cs nmap <silent> <buffer> ]] <Plug>(omnisharp_navigate_down)
-
-  au FileType cs nmap <F4> :OmniSharpRunTest<CR>
-  au FileType cs nnoremap <silent> <buffer> <C-> :OmniSharpGetCodeActions<CR>
-augroup END
+" Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
+imap fpp \|><space>
 
 " All of your Plugins must be added before the following line
 call plug#end()
 
+lua << EOF
+local lspconfig = require("lspconfig")
+
+-- Neovim doesn't support snippets out of the box, so we need to mutate the
+-- capabilities we send to the language server to let them know we want snippets.
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- Setup our autocompletion. These configuration options are the default ones
+-- copied out of the documentation.
+require "compe".setup {
+  enabled = true,
+  autocomplete = true,
+  debug = false,
+  min_length = 1,
+  preselect = "disabled",
+  throttle_time = 80,
+  source_timeout = 200,
+  incomplete_delay = 400,
+  max_abbr_width = 100,
+  max_kind_width = 100,
+  max_menu_width = 100,
+  documentation = true,
+  source = {
+    path = true,
+    buffer = true,
+    calc = true,
+    vsnip = true,
+    nvim_lsp = true,
+    nvim_lua = true,
+    spell = true,
+    tags = true,
+    treesitter = true
+  }
+}
+
+-- A callback that will get called when a buffer connects to the language server.
+-- Here we create any key maps that we want to have on that buffer.
+local on_attach = function(_, bufnr)
+  local function map(...)
+    vim.api.nvim_buf_set_keymap(bufnr, ...)
+  end
+
+  local map_opts = {noremap = true, silent = true}
+
+  map("n", "df", "<cmd>lua vim.lsp.buf.formatting()<cr>", map_opts)
+  map("n", "gd", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", map_opts)
+  map('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', map_opts)
+  map("n", "dt", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
+  map("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
+  map("n", "<c-k>", "<cmd>lua vim.lsp.buf.hover()<cr>", map_opts)
+  map("n", "gD", "<cmd>lua vim.lsp.buf.implementation()<cr>", map_opts)
+  map("n", "1gD", "<cmd>lua vim.lsp.buf.type_definition()<cr>", map_opts)
+  map('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', map_opts)
+  map("n", "gr", "<cmd>lua require'telescope.builtin'.lsp_references{}<cr>", map_opts)
+  map("n", "g0", "<cmd>lua require'telescope.builtin'.lsp_document_symbols{}<cr>", map_opts)
+  map("n", "gW", "<cmd>lua require'telescope.builtin'.lsp_workspace_symbols{}<cr>", map_opts)
+
+  map('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', map_opts)
+  map('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', map_opts)
+  map('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', map_opts)
+end
+
+lspconfig.elixirls.setup({
+  cmd = {vim.fn.expand("~/.elixir-ls/release/language_server.sh")},
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    elixirLS = {
+      dialyzerEnabled = false,
+      fetchDeps = false
+    }
+  }
+})
+
+lspconfig.gopls.setup {
+    cmd = {"gopls", "serve"},
+    on_attach = on_attach,
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
+      },
+    },
+  }
+
+
+lspconfig.phpactor.setup {
+  on_attach = on_attach,
+}
+EOF
+
+" Configure the tree sitter
+lua <<EOF
+require("nvim-treesitter.configs").setup {
+  highlight = {enable = true},
+  indent = {enable = true}
+}
+EOF
+
 " This has to be called after plug#end
-call deoplete#custom#option('sources', { 'go': ['ale'], 'elixir': ['ale'], 'typescript': ['ale']})
+" call deoplete#custom#option('sources', { 'go': ['ale'], 'typescript': ['ale']})
 
 "-------------------
 " General config
@@ -253,8 +297,8 @@ if maparg('<C-L>', 'n') ==# ''
 endif
 
 " Toggle if in OSx
-" let g:python2_host_prog = '/usr/local/bin/python'
-" let g:python3_host_prog = '/usr/local/bin/python3'
+" let g:python2_host_prog = '/usr/bin/python'
+" let g:python3_host_prog = '/usr/bin/python3'
 
 " set list listchars=tab:»·,trail:·,nbsp:· " Display extra whitespace
 
@@ -272,7 +316,8 @@ nnoremap <silent> J mZJ`Z
 set lazyredraw " only redraw when needed
 if exists('&ttyfast') | set ttyfast | endif " we have a fast terminal
 
-set foldmethod=syntax
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 set nofoldenable " Files don't start folded
 set nosmartindent
 set autoindent
@@ -335,7 +380,8 @@ set wildmode=full " ensure better completion
 " Colors
 "-------------------
 syntax on
-colorscheme monokai
+" colorscheme monokai
+colorscheme nord
 
 if (has("nvim"))
   "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
@@ -348,6 +394,8 @@ endif
 if (has("termguicolors"))
   set termguicolors
 endif
+
+set encoding=UTF-8
 
 "-------------------
 " Other remappings
