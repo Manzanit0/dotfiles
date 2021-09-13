@@ -6,6 +6,8 @@ plugins=(git osx tmux github fasd history-substring-search)
 
 source $ZSH/oh-my-zsh.sh
 
+eval "$(direnv hook zsh)"
+
 # Enabled history for Elixir iex
 export ERL_AFLAGS="-kernel shell_history enabled"
 
@@ -81,3 +83,9 @@ function source-dotnenv {
 
 alias dict="dict -d wn"
 alias httpry="httpry -f timestamp,dest-ip,direction,method,status-code,host,request-uri"
+
+alias /$=''
+alias rm='rm -iv'
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias ls='ls -FGh'

@@ -15,6 +15,8 @@
   visual = log --oneline --decorate --graph --all
   recent = branch --sort=-committerdate 
   recents = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+	recommit = commit --amend --no-edit
+	cleanup = "!git branch --format=\"%(if:notequals=*)%(HEAD)%(then)%(if:notequals=${1:-master})%(refname:lstrip=2)%(then)%(refname:lstrip=2)%(end)%(end)\" --merged master | xargs -rpxL1 git branch -d"
 [push]
   default = simple
 [color]
