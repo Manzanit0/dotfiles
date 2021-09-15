@@ -29,8 +29,9 @@ nnoremap <leader>cf :let @+=expand("%")<CR>
 " :IX commands copies full file to ix.io, and places the URL in the clipboard
 command! -range=% IX  <line1>,<line2>w !curl -F 'f:1=<-' ix.io | tr -d '\n' | xclip -i -selection clipboard
 
-" quit
+" Some easy remaps
 nnoremap <Leader>qq :qa<CR>
+nnoremap <Leader>w :w<CR>
 
 " maximize the window
 nmap <Leader>wm <C-W>_ <C-W>\|
@@ -124,7 +125,7 @@ set diffopt+=vertical
 
 " fugitive shortcuts
 " Working with maps: https://github.com/tpope/vim-fugitive/blob/master/doc/fugitive.txt#L252
-nmap <Leader>gs :Gstatus<CR>
+nmap <Leader>gs :Git<CR>
 nmap <Leader>gc :Gcommit<CR>
 nmap <Leader>gp :Git shove<CR>
 nmap <Leader>gb :Gblame<CR>
@@ -225,16 +226,16 @@ local on_attach = function(_, bufnr)
 
   local map_opts = {noremap = true, silent = true}
 
-  map("n", "df", "<cmd>lua vim.lsp.buf.formatting()<cr>", map_opts)
-  map("n", "gd", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", map_opts)
+  map("n", "ff", "<cmd>lua vim.lsp.buf.formatting()<cr>", map_opts)
+  map("n", "fi", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", map_opts)
   map('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', map_opts)
-  map("n", "dt", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
-  map("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
-  map("n", "<c-k>", "<cmd>lua vim.lsp.buf.hover()<cr>", map_opts)
+  map("n", "gy", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
+  map("n", "gk", "<cmd>lua vim.lsp.buf.hover()<cr>", map_opts)
   map("n", "gD", "<cmd>lua vim.lsp.buf.implementation()<cr>", map_opts)
   map("n", "1gD", "<cmd>lua vim.lsp.buf.type_definition()<cr>", map_opts)
   map('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', map_opts)
-  map("n", "gr", "<cmd>lua require'telescope.builtin'.lsp_references{}<cr>", map_opts)
+  map("n", "go", "<cmd>lua require'telescope.builtin'.lsp_references{}<cr>", map_opts)
+  map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', map_opts)
   map("n", "g0", "<cmd>lua require'telescope.builtin'.lsp_document_symbols{}<cr>", map_opts)
   map("n", "gW", "<cmd>lua require'telescope.builtin'.lsp_workspace_symbols{}<cr>", map_opts)
 
