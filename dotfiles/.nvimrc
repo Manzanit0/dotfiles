@@ -7,7 +7,7 @@ filetype off                  " required
 let mapleader=";"
 
 " Quickly open/source .nvimrc in new tab
-nnoremap <leader>nc :tabedit ~/.config/nvim/init.vim<CR>
+nnoremap <leader>nc :tabedit ~/repositories/dotfiles/dotfiles/.nvimrc<CR>
 nnoremap <leader>nr :source ~/.config/nvim/init.vim<CR>
 
 " Buffer switching
@@ -121,18 +121,21 @@ map <C-\> :Dirvish<CR>
 "-------------------
 Plug 'rbong/vim-flog'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 set diffopt+=vertical
 
 " fugitive shortcuts
 " Working with maps: https://github.com/tpope/vim-fugitive/blob/master/doc/fugitive.txt#L252
 nmap <Leader>gs :Git<CR>
-nmap <Leader>gc :Gcommit<CR>
+nmap <Leader>gc :Git commit<CR>
 nmap <Leader>gp :Git shove<CR>
-nmap <Leader>gb :Gblame<CR>
+nmap <Leader>gb :Git blame<CR>
+nmap <Leader>gl :Git log<CR>
+nmap <Leader>gll :Gllog<CR>
+nmap <Leader>gx :GBrowse<CR>
 
-let g:flog_default_arguments = { 'max_count': 1000 }
-nmap <Leader>gl :Flog<CR>
-nmap <Leader>gL :Flogsplit<CR>
+" Write to the current file's path and stage the results.
+nmap <Leader>gw :Gwrite<CR>
 
 Plug 'airblade/vim-gitgutter' " Shows a git diff in the gutter
 let g:gitgutter_enabled = 1
