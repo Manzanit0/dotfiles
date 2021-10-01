@@ -30,8 +30,12 @@ nnoremap <leader>cf :let @+=expand("%")<CR>
 command! -range=% IX  <line1>,<line2>w !curl -F 'f:1=<-' ix.io | tr -d '\n' | xclip -i -selection clipboard
 
 " Some easy remaps
-nnoremap <Leader>qq :qa<CR>
+nnoremap <Leader>q :q<CR>
 nnoremap <Leader>w :w<CR>
+nnoremap <Leader>wq :wq<CR>
+nnoremap <Leader>qq :qa!<CR>
+nnoremap <Leader>b <c-t>
+nnoremap gb <c-t>
 
 " maximize the window
 nmap <Leader>wm <C-W>_ <C-W>\|
@@ -42,9 +46,14 @@ nmap <Leader>wm <C-W>_ <C-W>\|
 " set the runtime path to include Vundle and initialize
 call plug#begin('~/.local/share/nvim/plugged')
 
+" Replacement for the included filetype.vim that is sourced on startup.
+Plug 'nathom/filetype.nvim'
+" Color Themes
 Plug 'crusoexia/vim-monokai' " Color theme
 Plug 'arcticicestudio/nord-vim'
+" Language support
 Plug 'sheerun/vim-polyglot' " Overall language support
+" Airline, duh!
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
 " let g:airline_powerline_fonts = 1
@@ -54,6 +63,7 @@ Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
 
+" Creating new tabd
 Plug 'gcmt/taboo.vim'
 map <leader>tn :TabooOpen
 map <leader>tr :TabooRename
@@ -137,17 +147,25 @@ nmap <Leader>gx :GBrowse<CR>
 " Write to the current file's path and stage the results.
 nmap <Leader>gw :Gwrite<CR>
 
-Plug 'airblade/vim-gitgutter' " Shows a git diff in the gutter
-let g:gitgutter_enabled = 1
-let g:gitgutter_highlight_lines = 0
-let g:gitgutter_realtime = 1
-let g:gitgutter_eager = 1
-set updatetime=100
+" Not removing yet, but testing out gitsigns.nvim
+" Plug 'airblade/vim-gitgutter' " Shows a git diff in the gutter
+" let g:gitgutter_enabled = 0
+" let g:gitgutter_highlight_lines = 0
+" let g:gitgutter_realtime = 1
+" let g:gitgutter_eager = 1
+" set updatetime=100
+"
+" " Navigate git hunks
+" nmap ]h <Plug>(GitGutterNextHunk)
+" nmap [h <Plug>(GitGutterPrevHunk)
 
-" Navigate git hunks
-nmap ]h <Plug>(GitGutterNextHunk)
-nmap [h <Plug>(GitGutterPrevHunk)
+Plug 'lewis6991/gitsigns.nvim'
+nmap <Leader>gl :Gitsigns toggle_linehl<CR>
 
+"-------------------
+" Random pluging to make stuff load faster
+" -----------------
+Plug 'lewis6991/impatient.nvim'
 
 "-------------------
 " Built-in LSP
@@ -175,6 +193,13 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 " -----------------
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
+
+" Vim Script
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'folke/trouble.nvim'
+ 
+nmap <Leader>t :TroubleToggle<CR>
+
 "-------------------
 " Elixir
 "-------------------
@@ -185,6 +210,21 @@ imap fpp \|><space>
 call plug#end()
 
 lua << EOF
+  require("trouble").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
+
+lua << EOF
+require('gitsigns').setup {
+  signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+}
+
 local lspconfig = require("lspconfig")
 
 -- Neovim doesn't support snippets out of the box, so we need to mutate the
@@ -274,6 +314,23 @@ lspconfig.gopls.setup {
 
 
 lspconfig.phpactor.setup {
+  on_attach = on_attach,
+}
+
+lspconfig.tsserver.setup{
+  on_attach = on_attach,
+}
+
+-- Need to toggle comment on this one/tsserver when working on a Deno project.
+-- Better solution pending.
+-- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings
+-- https://www.reddit.com/r/neovim/comments/pnl2zs/how_do_you_stop_lsp_clients/
+--lspconfig.denols.setup{
+--  on_attach = on_attach,
+--}
+
+-- https://github.com/lighttiger2505/sqls
+lspconfig.sqls.setup{
   on_attach = on_attach,
 }
 EOF
