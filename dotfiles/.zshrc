@@ -95,3 +95,19 @@ alias rm='rm -iv'
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias ls='ls -FGh'
+
+mfa-code () {
+	local paster
+	if [ -z "$(command -v gauth)" ]
+	then
+		echo "gauth is not available run: go get github.com/pcarrier/gauth" >&2
+		return 1
+	fi
+	paster=cat
+	# case "$(uname -s)" in
+	# 	([Dd]arwin*) paster="pbcopy"  ;;
+	# 	([Ll]inux*) paster="xclip -i"  ;;
+	# esac
+	gauth | grep -i "$1" | awk '{print $(NF-1)}' | $paster
+}
+
