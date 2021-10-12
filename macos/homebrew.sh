@@ -43,6 +43,7 @@ formulas=(
   'ncdu'
   'neovim'
   'node'
+  'ripgrep',
   'openssl'
   'pgcli'
   'postgresql'
