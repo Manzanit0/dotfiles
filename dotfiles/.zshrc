@@ -111,3 +111,12 @@ mfa-code () {
 	gauth | grep -i "$1" | awk '{print $(NF-1)}' | $paster
 }
 
+# Some handy aliases to work with Bitwarden CLI
+alias bw-search='bw list items --search'
+alias bw-pw-copy="jq -r '.[0].login.password' | pbcopy"
+alias bw-generate='bw generate -p --words 4 --separator $'
+
+function bw-unlock() {
+  # Depends on BW_PASSWORD env var being exported in the environment.
+  export BW_SESSION=$(bw unlock --passwordenv BW_PASSWORD --raw)
+}
