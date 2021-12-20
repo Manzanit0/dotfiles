@@ -122,6 +122,7 @@ map <Leader>vq :VimuxCloseRunner<CR>
 "-------------------
 Plug 'justinmk/vim-dirvish'
 Plug 'kristijanhusak/vim-dirvish-git'
+Plug 'tpope/vim-eunuch'
 let g:dirvish_mode = ':sort ,^.*[\/],'
 map <C-\> :Dirvish<CR>
 " TODO https://github.com/fsharpasharp/vim-dirvinist
@@ -193,6 +194,11 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 " -----------------
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
+"-------------------
+" Add lightbulb for code actions
+" -----------------
+Plug 'kosayoda/nvim-lightbulb'
+autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
 
 " Vim Script
 Plug 'kyazdani42/nvim-web-devicons'
@@ -206,6 +212,17 @@ nmap <Leader>t :TroubleToggle<CR>
 " Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
 imap fpp \|><space>
 
+"-------------------
+" PHP
+"-------------------
+Plug 'stephpy/vim-php-cs-fixer'
+let g:php_cs_fixer_path = "~/.composer/vendor/bin/php-cs-fixer"
+autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
+nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
+
+" Session Management
+Plug 'rmagatti/auto-session'
+
 " All of your Plugins must be added before the following line
 call plug#end()
 
@@ -214,6 +231,11 @@ lua << EOF
     -- your configuration comes here
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
+  }
+    
+  require('auto-session').setup {
+    log_level = 'info',
+    auto_session_suppress_dirs = {'~/', '~/repositories'}
   }
 EOF
 
@@ -271,6 +293,8 @@ local on_attach = function(_, bufnr)
 
   map("n", "ff", "<cmd>lua vim.lsp.buf.formatting()<cr>", map_opts)
   map("n", "fi", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", map_opts)
+  map("n", "fo", "<cmd>lua require'telescope.builtin'.lsp_code_actions{}<cr>", map_opts)
+
   map('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', map_opts)
   map("n", "gy", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
   map("n", "gk", "<cmd>lua vim.lsp.buf.hover()<cr>", map_opts)
