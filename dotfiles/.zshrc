@@ -1,8 +1,8 @@
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME=robbyrussell
 
-plugins=(git osx tmux github fasd history-substring-search asdf)
+plugins=(evalcache git macos tmux github fasd history-substring-search asdf vscode mix deno aws)
 
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
@@ -20,7 +20,8 @@ if type asdf &>/dev/null; then
   autoload -Uz compinit
   compinit
 fi
-eval "$(direnv hook zsh)"
+
+_evalcache direnv hook zsh
 
 # Enabled history for Elixir iex
 export ERL_AFLAGS="-kernel shell_history enabled"
@@ -47,15 +48,18 @@ export GOPATH=$(go env GOPATH)
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$(go env GOPATH)/bin
 
+# PHP
+export PATH="$PATH:$HOME/.composer/vendor/bin"
+
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # Some convenience function
-function deleteAllDockerContainers() {
+function docker-rm-all-containers() {
   docker stop $(docker ps -aq)
   docker rm $(docker ps -aq)
 }
 
-function deleteAllDockerImages() {
+function docker-rm-all-images() {
   docker rmi $(docker images -q)
 }
 
@@ -96,19 +100,22 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias ls='ls -FGh'
 
-mfa-code () {
-	local paster
-	if [ -z "$(command -v gauth)" ]
-	then
-		echo "gauth is not available run: go get github.com/pcarrier/gauth" >&2
-		return 1
-	fi
-	paster=cat
-	# case "$(uname -s)" in
-	# 	([Dd]arwin*) paster="pbcopy"  ;;
-	# 	([Ll]inux*) paster="xclip -i"  ;;
-	# esac
-	gauth | grep -i "$1" | awk '{print $(NF-1)}' | $paster
+alias aws-params='open "https://eu-west-1.console.aws.amazon.com/systems-manager/parameters/?region=eu-west-1&tab=Table"'
+
+alias rw="railway"
+
+function mfa-code() {
+  local paster
+  if [ -z "$(command -v gauth)" ]; then
+    echo "gauth is not available run: go get github.com/pcarrier/gauth" >&2
+    return 1
+  fi
+  paster=cat
+  # case "$(uname -s)" in
+  # 	([Dd]arwin*) paster="pbcopy"  ;;
+  # 	([Ll]inux*) paster="xclip -i"  ;;
+  # esac
+  gauth | grep -i "$1" | awk '{print $(NF-1)}' | $paster
 }
 
 # Some handy aliases to work with Bitwarden CLI
@@ -120,3 +127,12 @@ function bw-unlock() {
   # Depends on BW_PASSWORD env var being exported in the environment.
   export BW_SESSION=$(bw unlock --passwordenv BW_PASSWORD --raw)
 }
+
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
+alias up='docker compose up'
+alias down='docker compose down'
+alias dp='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"'
