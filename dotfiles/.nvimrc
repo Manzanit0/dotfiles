@@ -49,7 +49,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Replacement for the included filetype.vim that is sourced on startup.
 Plug 'nathom/filetype.nvim'
 " Color Themes
-Plug 'crusoexia/vim-monokai' " Color theme
+" Plug 'crusoexia/vim-monokai' " Color theme
 Plug 'arcticicestudio/nord-vim'
 " Language support
 Plug 'sheerun/vim-polyglot' " Overall language support
@@ -195,18 +195,6 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "-------------------
-" Add lightbulb for code actions
-" -----------------
-Plug 'kosayoda/nvim-lightbulb'
-autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
-
-" Vim Script
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'folke/trouble.nvim'
- 
-nmap <Leader>t :TroubleToggle<CR>
-
-"-------------------
 " Elixir
 "-------------------
 " Plug 'elixir-editors/vim-elixir' " Syntax highlighting and indentation.
@@ -220,24 +208,8 @@ let g:php_cs_fixer_path = "~/.composer/vendor/bin/php-cs-fixer"
 autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
 nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
 
-" Session Management
-Plug 'rmagatti/auto-session'
-
 " All of your Plugins must be added before the following line
 call plug#end()
-
-lua << EOF
-  require("trouble").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
-    
-  require('auto-session').setup {
-    log_level = 'info',
-    auto_session_suppress_dirs = {'~/', '~/repositories'}
-  }
-EOF
 
 lua << EOF
 require('gitsigns').setup {
@@ -436,7 +408,6 @@ set showmatch "sm: flashes matching brackets or parentheses
 " See: https://vim.fandom.com/wiki/Accessing_the_system_clipboard
 set clipboard=unnamedplus " In case of Linux
 " set clipboard=unnamed " This would be for OSx.
-
 
 " When scrolling off-screen do so 3 lines at a time, not 1
 set scrolloff=3

@@ -136,3 +136,5 @@ timezsh() {
 alias up='docker compose up'
 alias down='docker compose down'
 alias dp='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"'
+
+alias vim='nvim'
