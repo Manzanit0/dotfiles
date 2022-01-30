@@ -51,8 +51,11 @@ Plug 'nathom/filetype.nvim'
 " Color Themes
 " Plug 'crusoexia/vim-monokai' " Color theme
 Plug 'arcticicestudio/nord-vim'
+Plug 'projekt0n/github-nvim-theme'
+
 " Language support
 Plug 'sheerun/vim-polyglot' " Overall language support
+
 " Airline, duh!
 Plug 'vim-airline/vim-airline' " Navbar
 Plug 'vim-airline/vim-airline-themes' " Colours for Navbar
@@ -437,11 +440,13 @@ set wildmode=full " ensure better completion
 "-------------------
 syntax on
 " colorscheme monokai
-colorscheme nord
+" colorscheme nord
+colorscheme github_dark
 
 if (has("nvim"))
   "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  let $TERM="xterm-256color"
 endif
 
 "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
