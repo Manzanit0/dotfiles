@@ -71,6 +71,14 @@ Plug 'gcmt/taboo.vim'
 map <leader>tn :TabooOpen
 map <leader>tr :TabooRename
 
+Plug 'Konfekt/FastFold'
+nmap zuz <Plug>(FastFoldUpdate)
+let g:fastfold_savehook = 1
+let g:fastfold_fold_command_suffixes =  ['x','X','a','A','o','O','c','C']
+let g:fastfold_fold_movement_commands = [']z', '[z', 'zj', 'zk']
+
+Plug 's1n7ax/nvim-terminal'
+
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -179,6 +187,15 @@ Plug 'hrsh7th/nvim-compe'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 
+" For showing diagnostics
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'folke/trouble.nvim'
+nnoremap <leader>xx <cmd>TroubleToggle<cr>
+nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+
 "-------------------
 " Telescope
 " -----------------
@@ -215,6 +232,16 @@ nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
 call plug#end()
 
 lua << EOF
+vim.o.hidden = true -- this is needs to be set to reuse terminal between toggles.
+require('nvim-terminal').setup({
+    toggle_keymap = '<leader>tt',
+    increase_height_keymap = '<leader>t=',
+    decrease_height_keymap = '<leader>t-',
+    window_height_change_amount = 25,
+})
+
+require("trouble").setup({})
+
 require('gitsigns').setup {
   signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
   numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
@@ -311,6 +338,7 @@ lspconfig.gopls.setup {
     },
   }
 
+lspconfig.golangci_lint_ls.setup{}
 
 lspconfig.phpactor.setup {
   on_attach = on_attach,
