@@ -46,6 +46,11 @@ nmap <Leader>wm <C-W>_ <C-W>\|
 " set the runtime path to include Vundle and initialize
 call plug#begin('~/.local/share/nvim/plugged')
 
+Plug 'jbyuki/venn.nvim'
+
+Plug 'mrjones2014/legendary.nvim'
+Plug 'stevearc/dressing.nvim'
+
 " Replacement for the included filetype.vim that is sourced on startup.
 Plug 'nathom/filetype.nvim'
 " Color Themes
@@ -89,6 +94,7 @@ Plug 'junegunn/fzf.vim'
 " Map it to ctrl+p and leader+s
 nnoremap <C-p> :<C-u>FZF<CR>
 nnoremap <leader>s :<C-u>FZF<CR>
+nnoremap <leader>d :Maps<CR>
 
 " Configure fzf so shortcuts match with vim split defaults
 let g:fzf_action = {
@@ -105,6 +111,7 @@ command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimit
 
 " Search file name with preview
 nmap <Leader>f :Files<CR>
+nmap <Leader>b :Buffers<CR>
 
 " Search file contents
 nmap <Leader>c :AgFuzzy<CR>
@@ -182,6 +189,8 @@ nmap <Leader>gw :Gwrite<CR>
 Plug 'lewis6991/gitsigns.nvim'
 nmap <Leader>gl :Gitsigns toggle_linehl<CR>
 
+Plug 'TimUntersberger/neogit'
+
 "-------------------
 " Random pluging to make stuff load faster
 " -----------------
@@ -203,6 +212,9 @@ nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
 nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
 nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
 nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+
+Plug 'simrat39/symbols-outline.nvim'
+nnoremap <leader>m <cmd>SymbolsOutline<cr>
 
 "-------------------
 " Telescope
@@ -236,10 +248,82 @@ let g:php_cs_fixer_path = "~/.composer/vendor/bin/php-cs-fixer"
 autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
 nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
 
+Plug 'ray-x/lsp_signature.nvim'
+Plug 'onsails/lspkind-nvim'
+
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'golang/vscode-go'
+
+" Expand
+imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+
+" Expand or jump
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+
+" Jump forward or backward
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+" Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
+" See https://github.com/hrsh7th/vim-vsnip/pull/50
+nmap        s   <Plug>(vsnip-select-text)
+xmap        s   <Plug>(vsnip-select-text)
+nmap        S   <Plug>(vsnip-cut-text)
+xmap        S   <Plug>(vsnip-cut-text)
+
+Plug 'henriquehbr/nvim-startup.lua'
+
+Plug 'j-hui/fidget.nvim'
+
 " All of your Plugins must be added before the following line
 call plug#end()
 
 lua << EOF
+-- init.lua
+
+ -- venn.nvim: enable or disable keymappings
+function _G.Toggle_venn()
+    local venn_enabled = vim.inspect(vim.b.venn_enabled)
+    if venn_enabled == "nil" then
+        vim.b.venn_enabled = true
+        vim.cmd[[setlocal ve=all]]
+        -- draw a line on HJKL keystokes
+        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+        -- draw a box by pressing "f" with visual selection
+        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
+    else
+        vim.cmd[[setlocal ve=]]
+        vim.cmd[[mapclear <buffer>]]
+        vim.b.venn_enabled = nil
+    end
+end
+
+-- toggle keymappings for venn using <leader>v
+vim.api.nvim_set_keymap('n', '<leader>v', ":lua Toggle_venn()<CR>", { noremap = true})
+
+require'nvim-tree'.setup()
+require 'neogit'.setup {}
+require "lsp_signature".setup {}
+require "lspkind".init {}
+require 'nvim-startup'.setup()
+require "fidget".setup {}
+require 'legendary'.setup {}
+require 'dressing'.setup {}
+
+vim.g.symbols_outline = {
+    auto_preview = false,
+    position = 'right',
+    relative_width = true,
+    width = 50,
+}
 vim.o.hidden = true -- this is needs to be set to reuse terminal between toggles.
 require('nvim-terminal').setup({
     toggle_keymap = '<leader>tt',
@@ -352,17 +436,17 @@ lspconfig.phpactor.setup {
   on_attach = on_attach,
 }
 
-lspconfig.tsserver.setup{
-  on_attach = on_attach,
-}
+-- lspconfig.tsserver.setup{
+--   on_attach = on_attach,
+-- }
 
 -- Need to toggle comment on this one/tsserver when working on a Deno project.
 -- Better solution pending.
 -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings
 -- https://www.reddit.com/r/neovim/comments/pnl2zs/how_do_you_stop_lsp_clients/
---lspconfig.denols.setup{
---  on_attach = on_attach,
---}
+lspconfig.denols.setup{
+ on_attach = on_attach,
+}
 
 -- https://github.com/lighttiger2505/sqls
 lspconfig.sqls.setup{
@@ -482,7 +566,7 @@ colorscheme github_dark
 if (has("nvim"))
   "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  let $TERM="xterm-256color"
+  " let $TERM="xterm-256color"
 endif
 
 "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
