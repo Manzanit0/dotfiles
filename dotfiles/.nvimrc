@@ -66,6 +66,10 @@ Plug 'tomtom/tcomment_vim' " Commenting & Uncommenting stuff
 Plug 'tpope/vim-surround' " quoting/parenthesizing made simple
 Plug 'tpope/vim-dispatch' " Asynchronous build and test dispatcher\
 
+Plug 'vim-test/vim-test'
+nmap <silent> <leader>te :TestNearest<CR>
+nmap <silent> <leader>Te :TestFile<CR>
+
 " Creating new tabd
 Plug 'gcmt/taboo.vim'
 map <leader>tn :TabooOpen
@@ -119,24 +123,28 @@ nmap <Leader>l :BLines<CR>
 "-------------------
 " Vimux
 "-------------------
-Plug 'benmills/vimux' " Easy interaction with tmux
-let g:VimuxUseNearest = 0
-map <Leader>te :call VimuxRunCommand("clear; mix test " . bufname("%"))<CR>
-map <Leader>tg :call VimuxRunCommand("clear; go test " . expand("%:p:h"))<CR>
-
-map <Leader>vp :VimuxPromptCommand<CR>
-map <Leader>vl :VimuxRunLastCommand<CR>
-map <Leader>vq :VimuxCloseRunner<CR>
+"Plug 'benmills/vimux' " Easy interaction with tmux
+"let g:VimuxUseNearest = 0
+"map <Leader>te :call VimuxRunCommand("clear; mix test " . bufname("%"))<CR>
+"map <Leader>tg :call VimuxRunCommand("clear; go test " . expand("%:p:h"))<CR>
+"
+"map <Leader>vp :VimuxPromptCommand<CR>
+"map <Leader>vl :VimuxRunLastCommand<CR>
+"map <Leader>vq :VimuxCloseRunner<CR>
 
 "-------------------
 " Directory management
 "-------------------
-Plug 'justinmk/vim-dirvish'
-Plug 'kristijanhusak/vim-dirvish-git'
-Plug 'tpope/vim-eunuch'
-let g:dirvish_mode = ':sort ,^.*[\/],'
-map <C-\> :Dirvish<CR>
+" Plug 'justinmk/vim-dirvish'
+" Plug 'kristijanhusak/vim-dirvish-git'
+" Plug 'tpope/vim-eunuch'
+" let g:dirvish_mode = ':sort ,^.*[\/],'
+" map <C-\> :Dirvish<CR>
 " TODO https://github.com/fsharpasharp/vim-dirvinist
+
+Plug 'kyazdani42/nvim-tree.lua'
+nnoremap - :NvimTreeOpen<CR>
+nnoremap <C-n> :NvimTreeToggle<CR>
 
 "-------------------
 " Git
