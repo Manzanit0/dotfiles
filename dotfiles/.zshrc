@@ -39,8 +39,12 @@ else
 fi
 
 # Allow tmux work properly (hack?)
-alias tmux="TERM=screen-256color-bce tmux"
-set -g default-terminal "screen-256color"
+# alias tmux="TERM=screen-256color-bce tmux"
+# set -g default-terminal "screen-256color"
+#
+alias update-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
+alias update-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
+alias update-nvim-master='asdf uninstall neovim ref:master && asdf install neovim ref:master'
 
 # GOPATH :)
 export GOROOT=$(go env GOROOT)
@@ -60,7 +64,8 @@ function docker-rm-all-containers() {
 }
 
 function docker-rm-all-images() {
-  docker rmi $(docker images -q)
+  docker-rm-all-containers()
+  docker rmi -f $(docker images -q)
 }
 
 function pg-docker() {
