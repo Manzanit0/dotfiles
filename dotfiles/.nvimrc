@@ -150,7 +150,7 @@ nmap <Leader>l :BLines<CR>
 " TODO https://github.com/fsharpasharp/vim-dirvinist
 
 Plug 'kyazdani42/nvim-tree.lua'
-nnoremap - :NvimTreeOpen<CR>
+nnoremap - :NvimTreeFindFile<CR>
 nnoremap <C-n> :NvimTreeToggle<CR>
 
 "-------------------

@@ -57,7 +57,6 @@ formulas=(
 )
 
 casks=(
-  'alfred'
   'docker'
   'firefox'
   'google-chrome'
@@ -69,7 +68,6 @@ casks=(
   'telegram'
   'visual-studio-code'
   'spotify'
-  'authy'
   'rectangle'
   'zoom'
 )
