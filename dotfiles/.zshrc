@@ -120,6 +120,10 @@ function fkill {
   fi
 }
 
+path() {
+  echo $PATH | tr ':' '\n'
+}
+
 alias dict="dict -d wn"
 alias httpry="httpry -f timestamp,dest-ip,direction,method,status-code,host,request-uri"
 
@@ -154,5 +158,7 @@ alias vim='nvim'
 
 alias ssh-ls='ps aux | grep ssh'
 
+alias ez="$EDITOR ~/repositories/dotfiles/dotfiles/.zshrc"
+alias sz="source ~/.zshrc"
 # Uncomment to profile
 # zprof
