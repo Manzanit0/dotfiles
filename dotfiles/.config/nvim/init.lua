@@ -66,7 +66,7 @@ vim.o.scrolloff = 3
 vim.o.splitbelow = true
 vim.o.splitright = true
 
-vim.o.diffopt = vim.o.diffopt .. "vertical"
+-- vim.o.diffopt = vim.o.diffopt .. "vertical"
 
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
@@ -123,6 +123,20 @@ end
 
 -- " In case you use :terminal, bring back ESC
 -- :tnoremap <Esc> <C-\><C-n>
+
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
+end
+
+local packer_bootstrap = ensure_packer()
+
 require("packer").startup(function(use)
   -- theme
   use({ 'projekt0n/github-nvim-theme',
@@ -212,11 +226,13 @@ require("packer").startup(function(use)
     config = function()
       require("trouble").setup {}
 
-      vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>TroubleToggle<cr>")
-      vim.api.nvim_set_keymap("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>")
-      vim.api.nvim_set_keymap("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>")
-      vim.api.nvim_set_keymap("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>")
-      vim.api.nvim_set_keymap("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>")
+      vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>",
+        { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>",
+        { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", { noremap = true, silent = true })
     end
   })
 
@@ -224,14 +240,14 @@ require("packer").startup(function(use)
   use({ 'simrat39/symbols-outline.nvim',
     config = function()
       require("symbols-outline").setup()
-      vim.api.nvim_set_keymap("n", "<leader>m", "<cmd>SymbolsOutline<cr>")
+      vim.api.nvim_set_keymap("n", "<leader>m", "<cmd>SymbolsOutline<cr>", { noremap = true, silent = true })
     end
   })
 
   -- git wrapper
   use({ 'tpope/vim-fugitive',
     config = function()
-      vim.api.nvim_set_keymap("n", "<Leader>gs", "<CMD>Git<CR>")
+      vim.api.nvim_set_keymap("n", "<Leader>gs", "<CMD>Git<CR>", { noremap = true, silent = true })
     end
   })
 
@@ -250,9 +266,14 @@ require("packer").startup(function(use)
   })
 
   use({ 'nvim-treesitter/nvim-treesitter',
+    run = function()
+      vim.cmd([[TSUpdate]])
+    end,
     config = function()
       require 'nvim-treesitter.configs'.setup {
         ensure_installed = { "lua", "go", "elixir", "javascript", "typescript" },
+        highlight = { enable = true },
+        indent = { enable = true }
       }
     end
   })
@@ -378,4 +399,10 @@ require("packer").startup(function(use)
 
   -- TODO: 'junegunn/fzf.vim'... instead of telescope?
   -- TODO: snippets: hrsh7th/vim-vsnip, or check astrovim
+
+  -- Automatically set up your configuration after cloning packer.nvim
+  -- Put this at the end after all plugins
+  -- if packer_bootstrap then
+  --   require('packer').sync()
+  -- end
 end)
