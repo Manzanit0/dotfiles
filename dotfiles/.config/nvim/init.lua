@@ -101,7 +101,8 @@ for _, mapping in ipairs({
   -- relative path
   { "n", "<leader>cf", "let @+=expand(\"%\")<CR>" },
   -- keep the cursor in place while joining lines
-  { "n", "J", "mZJ`Z" }
+  { "n", "J", "mZJ`Z" },
+  { "n", "<leader>qq", ":qa!<CR>" },
 }) do
   vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -138,6 +139,8 @@ end
 local packer_bootstrap = ensure_packer()
 
 require("packer").startup(function(use)
+  use('wbthomason/packer.nvim', { opt = true })
+
   -- theme
   use({ 'projekt0n/github-nvim-theme',
     config = function()
@@ -213,8 +216,8 @@ require("packer").startup(function(use)
     requires = { { 'nvim-lua/plenary.nvim' } },
     config = function()
       local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-      vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+      vim.keymap.set('n', "<leader>ff", builtin.find_files, {})
+      vim.keymap.set('n', "<leader>fg", builtin.live_grep, {})
       vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
       vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
     end
@@ -266,12 +269,17 @@ require("packer").startup(function(use)
   })
 
   use({ 'nvim-treesitter/nvim-treesitter',
-    run = function()
-      vim.cmd([[TSUpdate]])
-    end,
     config = function()
       require 'nvim-treesitter.configs'.setup {
-        ensure_installed = { "lua", "go", "elixir", "javascript", "typescript" },
+        ensure_installed = {
+          "lua",
+          "bash",
+          "yaml", "json",
+          "go", "gomod", "gowork",
+          "dockerfile", "hcl",
+          "elixir",
+          "javascript", "typescript"
+        },
         highlight = { enable = true },
         indent = { enable = true }
       }
@@ -310,14 +318,8 @@ require("packer").startup(function(use)
 
         mapping = {
           ["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
-          ["<C-n>"] = cmp.mapping(
-            cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-            { "i" }
-          ),
-          ["<C-p>"] = cmp.mapping(
-            cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-            { "i" }
-          ),
+          ["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
+          ["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
           ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i" }),
           ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i" }),
         },
@@ -340,40 +342,39 @@ require("packer").startup(function(use)
         ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
       }
 
+      vim.keymap.set('n', '<S-F8>', vim.diagnostic.goto_prev, { noremap = true, silent = true })
+      vim.keymap.set('n', '<F8>', vim.diagnostic.goto_next, { noremap = true, silent = true })
+      vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, { noremap = true, silent = true })
+
       local on_attach = function(client, bufnr)
-        local opts = { noremap = true, silent = true }
+        local opts = { silent = true, buffer = bufnr }
+
+        -- code actions
+        vim.keymap.set("n", "ff", vim.lsp.buf.format, opts)
+        vim.keymap.set('n', 'fo', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
+
+        -- code navigation
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "gk", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "gs", require 'telescope.builtin'.lsp_document_symbols, opts)
+        -- vim.keymap.set("n", "gW", "<cmd>lua require'telescope.builtin'.lsp_workspace_symbols{}<cr>", opts)
+
+        -- references code navigation (quickfix list)
+        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "gD", vim.lsp.buf.implementation, opts)
+
+        -- references code navigation (Telescope)
+        vim.keymap.set("n", "<leader>gr", require 'telescope.builtin'.lsp_references, opts)
+        vim.keymap.set('n', "<leader>gD", require 'telescope.builtin'.lsp_implementations, opts)
+
         vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-        local function map(...)
-          vim.api.nvim_buf_set_keymap(bufnr, ...)
-        end
-
-        local map_opts = { noremap = true, silent = true }
-
-        map("n", "ff", "<cmd>lua vim.lsp.buf.formatting()<cr>", map_opts)
-        map("n", "fi", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", map_opts)
-        map("n", "fo", "<cmd>lua require'telescope.builtin'.lsp_code_actions{}<cr>", map_opts)
-
-        map('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', map_opts)
-        map("n", "gy", "<cmd>lua vim.lsp.buf.definition()<cr>", map_opts)
-        map("n", "gk", "<cmd>lua vim.lsp.buf.hover()<cr>", map_opts)
-        map("n", "gD", "<cmd>lua vim.lsp.buf.implementation()<cr>", map_opts)
-        map("n", "1gD", "<cmd>lua vim.lsp.buf.type_definition()<cr>", map_opts)
-        map('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', map_opts)
-        map("n", "go", "<cmd>lua require'telescope.builtin'.lsp_references{}<cr>", map_opts)
-        map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', map_opts)
-        map("n", "g0", "<cmd>lua require'telescope.builtin'.lsp_document_symbols{}<cr>", map_opts)
-        map("n", "gW", "<cmd>lua require'telescope.builtin'.lsp_workspace_symbols{}<cr>", map_opts)
-
-        map('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', map_opts)
-        map('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', map_opts)
-        map('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', map_opts)
       end
 
       for _, lsp in pairs({
         "gopls",
-        "svelte",
         "tsserver",
+        "ocamlls",
       }) do
         require("lspconfig")[lsp].setup({
           capabilities = capabilities,
@@ -385,6 +386,30 @@ require("packer").startup(function(use)
 
       require("mason").setup()
       require("mason-lspconfig").setup({ automatic_installation = true })
+    end,
+  })
+
+  -- Organize Go imports on save.
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = { "*.go" },
+    callback = function()
+      local clients = vim.lsp.buf_get_clients()
+      for _, client in pairs(clients) do
+
+        local params = vim.lsp.util.make_range_params(nil, client.offset_encoding)
+        params.context = { only = { "source.organizeImports" } }
+
+        local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 5000)
+        for _, res in pairs(result or {}) do
+          for _, r in pairs(res.result or {}) do
+            if r.edit then
+              vim.lsp.util.apply_workspace_edit(r.edit, client.offset_encoding)
+            else
+              vim.lsp.buf.execute_command(r.command)
+            end
+          end
+        end
+      end
     end,
   })
 
