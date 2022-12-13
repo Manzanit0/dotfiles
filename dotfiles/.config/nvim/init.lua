@@ -33,11 +33,12 @@ vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
 -- folding
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-vim.o.nofoldenable = true
-vim.o.nosmartindent = true
+vim.g.nosmartindent = true
 vim.o.autoindent = true
 vim.o.cursorline = true
---vim.o.cuc cul    " highlight the current column the cursor is on
+
+-- TODO: need to look how to set this... apparently it's not vim.o.nofoldenable.
+vim.cmd [[ set nofoldenable ]]
 
 -- spacing
 vim.o.backspace = "indent,eol,start"
@@ -70,6 +71,20 @@ vim.o.splitright = true
 
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
+
+-- tpope/vim-unimpaired uses '[' and ']', however, they're not too comfortable on my
+-- layout. '<' and '>' are much better.
+vim.cmd [[
+  nmap < [
+  nmap > ]
+  omap < [
+  omap > ]
+  xmap < [
+  xmap > ]
+]]
+
+-- In case you use :terminal, bring back ESC.
+vim.cmd [[ tnoremap <Esc> <C-\><C-n> ]]
 
 -- mappings
 for _, mapping in ipairs({
@@ -104,7 +119,7 @@ for _, mapping in ipairs({
   { "n", "J", "mZJ`Z" },
   { "n", "<leader>qq", ":qa!<CR>" },
 }) do
-  vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+  vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
 -- " Toggle if in OSx
@@ -121,9 +136,6 @@ end
 -- " Highlights with a small shadow all code surpassing 80 characters.
 -- highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 -- match OverLength /\%81v.\+/
-
--- " In case you use :terminal, bring back ESC
--- :tnoremap <Esc> <C-\><C-n>
 
 local ensure_packer = function()
   local fn = vim.fn
@@ -142,7 +154,7 @@ require("packer").startup(function(use)
   use('wbthomason/packer.nvim', { opt = true })
 
   -- theme
-  use({ 'projekt0n/github-nvim-theme',
+  use({ "projekt0n/github-nvim-theme",
     config = function()
       vim.o.termguicolors = true
       require('github-theme').setup({
@@ -152,7 +164,11 @@ require("packer").startup(function(use)
   })
 
   -- speed up loading Lua modules in Neovim to improve startup time
-  use('lewis6991/impatient.nvim')
+  use({ "lewis6991/impatient.nvim",
+    config = function()
+      require("impatient")
+    end
+  })
 
   -- speed up Vim by updating folds only when called-for
   use({ "Konfekt/FastFold",
@@ -163,24 +179,27 @@ require("packer").startup(function(use)
     end
   })
 
-  use({ 'vim-test/vim-test',
+  use({ "vim-test/vim-test",
     config = function()
-      vim.api.nvim_set_keymap("n", "<leader>te", "TestNearest<CR>", { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "<leader>Te", "TestFile<CR>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>te", "<cmd>TestNearest<CR>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>Te", "<cmd>TestFile<CR>", { noremap = true, silent = true })
     end
   })
 
-  use({ 'numToStr/Comment.nvim',
+  use({ "numToStr/Comment.nvim",
     config = function()
       require('Comment').setup()
     end
   })
 
   -- change parentheses and what not with more ease
-  use('tpope/vim-surround')
+  use("tpope/vim-surround")
+
+  -- navigate quickfix and location lists easier
+  use("tpope/vim-unimpaired")
 
   -- floating terminal
-  use({ 's1n7ax/nvim-terminal',
+  use({ "s1n7ax/nvim-terminal",
     config = function()
       vim.o.hidden = true -- this is needed to be set to reuse terminal between toggles
       require('nvim-terminal').setup({
@@ -202,24 +221,57 @@ require("packer").startup(function(use)
     config = function()
       -- Unless you are still migrating, remove the deprecated commands from v1.x
       vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
-      vim.api.nvim_set_keymap("n", "<leader>o", "<cmd>Neotree focus<cr>", { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "<leader>e", "<cmd>Neotree toggle<cr>", { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "-", "<cmd>Neotree reveal<cr>", { noremap = true, silent = true })
+
+      vim.keymap.set("n", "<leader>o", "<cmd>Neotree focus<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "-", "<cmd>Neotree reveal<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "\\", "<cmd>Neotree toggle current reveal_force_cwd<cr>", { noremap = true, silent = true })
+
+      require("neo-tree").setup({
+        close_if_last_window = true,
+        window = {
+          position = "right",
+        },
+        filesystem = {
+          hijack_netrw_behavior = "open_default",
+          filtered_items = {
+            visible = true,
+            hide_dotfiles = false,
+            hide_gitignored = false,
+          },
+          window = {
+            mappings = {
+              ["h"] = "toggle_hidden",
+            }
+          },
+        }
+      })
     end
   })
 
   -- icons for all
-  use('nvim-tree/nvim-web-devicons')
+  use("nvim-tree/nvim-web-devicons")
 
-  use({ 'nvim-telescope/telescope.nvim',
+  use({ "nvim-telescope/telescope.nvim",
     tag = '0.1.0',
     requires = { { 'nvim-lua/plenary.nvim' } },
     config = function()
       local builtin = require('telescope.builtin')
-      vim.keymap.set('n', "<leader>ff", builtin.find_files, {})
-      vim.keymap.set('n', "<leader>fg", builtin.live_grep, {})
-      vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-      vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+      vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+      vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+      vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
+      vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+
+      local trouble = require("trouble.providers.telescope")
+      local telescope = require("telescope")
+      telescope.setup {
+        defaults = {
+          mappings = {
+            i = { ["<c-t>"] = trouble.open_with_trouble },
+            n = { ["<c-t>"] = trouble.open_with_trouble },
+          },
+        },
+      }
     end
   })
 
@@ -229,48 +281,58 @@ require("packer").startup(function(use)
     config = function()
       require("trouble").setup {}
 
-      vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>",
-        { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>",
-        { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", { noremap = true, silent = true })
-      vim.api.nvim_set_keymap("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>", { silent = true, noremap = true })
     end
   })
 
   -- a tree like view for symbols in Neovim
-  use({ 'simrat39/symbols-outline.nvim',
+  use({ "simrat39/symbols-outline.nvim",
     config = function()
       require("symbols-outline").setup()
-      vim.api.nvim_set_keymap("n", "<leader>m", "<cmd>SymbolsOutline<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>m", "<cmd>SymbolsOutline<cr>", { noremap = true, silent = true })
     end
   })
 
   -- git wrapper
-  use({ 'tpope/vim-fugitive',
+  use({ "tpope/vim-fugitive",
     config = function()
-      vim.api.nvim_set_keymap("n", "<Leader>gs", "<CMD>Git<CR>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<Leader>gs", "<cmd>Git<cr>", { noremap = true, silent = true })
     end
   })
 
   -- git integration for buffers
-  use({ 'lewis6991/gitsigns.nvim',
+  use({ "lewis6991/gitsigns.nvim",
     config = function()
-      require('gitsigns').setup()
+      require('gitsigns').setup({
+        on_attach = function(bufnr)
+          local function map(mode, lhs, rhs, opts)
+            opts = vim.tbl_extend('force', { noremap = true, silent = true }, opts or {})
+            vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
+          end
+
+          -- Navigation
+          map('n', ']n', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
+          map('n', '[n', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", { expr = true })
+        end
+      })
     end
   })
 
   -- ui for nvim-lsp progress
-  use({ 'j-hui/fidget.nvim',
+  use({ "j-hui/fidget.nvim",
     config = function()
       require "fidget".setup()
     end
   })
 
-  use({ 'nvim-treesitter/nvim-treesitter',
+  use({ "nvim-treesitter/nvim-treesitter",
     config = function()
-      require 'nvim-treesitter.configs'.setup {
+      require "nvim-treesitter.configs".setup {
         ensure_installed = {
           "lua",
           "bash",
@@ -318,8 +380,11 @@ require("packer").startup(function(use)
 
         mapping = {
           ["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
+          ["<enter>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
           ["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
           ["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
+          ["<C-j>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
+          ["<C-k>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
           ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i" }),
           ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i" }),
         },
@@ -342,9 +407,15 @@ require("packer").startup(function(use)
         ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
       }
 
-      vim.keymap.set('n', '<S-F8>', vim.diagnostic.goto_prev, { noremap = true, silent = true })
+      -- diagnostics
       vim.keymap.set('n', '<F8>', vim.diagnostic.goto_next, { noremap = true, silent = true })
-      vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, { noremap = true, silent = true })
+
+      -- FIXME: the Shift+F8 isn't quite working. Too bad I don't use it much.
+      vim.keymap.set('n', '<S-F8>', vim.diagnostic.goto_prev, { noremap = true, silent = true })
+
+      -- Note: By leveraging the quickfix list instead of location, we get
+      -- project wide diagnostics instead of bufferwise.
+      vim.keymap.set('n', '<space>q', vim.diagnostic.setqflist, { noremap = true, silent = true })
 
       local on_attach = function(client, bufnr)
         local opts = { silent = true, buffer = bufnr }
@@ -375,6 +446,8 @@ require("packer").startup(function(use)
         "gopls",
         "tsserver",
         "ocamlls",
+        "terraformls",
+        "sumneko_lua",
       }) do
         require("lspconfig")[lsp].setup({
           capabilities = capabilities,
@@ -386,6 +459,32 @@ require("packer").startup(function(use)
 
       require("mason").setup()
       require("mason-lspconfig").setup({ automatic_installation = true })
+
+      vim.api.nvim_create_autocmd("CursorHold", {
+        buffer = bufnr,
+        callback = function()
+          local float_opts = {
+            focusable = false,
+            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+            border = "rounded",
+            source = "always", -- show source in diagnostic popup window
+            prefix = " ",
+          }
+
+          if not vim.b.diagnostics_pos then
+            vim.b.diagnostics_pos = { nil, nil }
+          end
+
+          local cursor_pos = vim.api.nvim_win_get_cursor(0)
+          if (cursor_pos[1] ~= vim.b.diagnostics_pos[1] or cursor_pos[2] ~= vim.b.diagnostics_pos[2])
+              and #vim.diagnostic.get() > 0
+          then
+            vim.diagnostic.open_float(nil, float_opts)
+          end
+
+          vim.b.diagnostics_pos = cursor_pos
+        end,
+      })
     end,
   })
 
@@ -413,14 +512,26 @@ require("packer").startup(function(use)
     end,
   })
 
+  -- Improves UI boxes, such as the LSP rename.
+  use({ 'stevearc/dressing.nvim' })
+
   -- TODO: do we want this as opposed to vim-fugitive?
   -- use({ 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' })
 
   -- TODO
   -- To register mappings
-  -- use({ 'mrjones2014/legendary.nvim' })
-  -- To improve UI boxes
-  -- use({ 'stevearc/dressing.nvim' })
+  -- use({ 'mrjones2014/legendary.nvim', config = function()
+  --   require('legendary').setup({
+  --     keymaps = {
+  --       { '<leader>ff', ':Telescope find_files', description = 'Find files' },
+  --       { '<leader>fg', ':Telescope live_grep', description = 'Find files' },
+  --       { 'ff', 'N/a', description = 'LSP: Format Buffer' },
+  --       { '<F2>', 'N/a', description = 'LSP: Rename' },
+  --       { 'gd', 'N/a', description = 'LSP: Go to definition' },
+  --       { 'gk', 'N/a', description = 'LSP: Show hover' },
+  --     },
+  --   })
+  -- end })
 
   -- TODO: 'junegunn/fzf.vim'... instead of telescope?
   -- TODO: snippets: hrsh7th/vim-vsnip, or check astrovim
