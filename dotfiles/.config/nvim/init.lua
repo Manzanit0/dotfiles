@@ -203,7 +203,7 @@ require("packer").startup(function(use)
     config = function()
       vim.o.hidden = true -- this is needed to be set to reuse terminal between toggles
       require('nvim-terminal').setup({
-        toggle_keymap = '<leader>tt',
+        toggle_keymap = '<C-_>',
         increase_height_keymap = '<leader>t=',
         decrease_height_keymap = '<leader>t-',
         window_height_change_amount = 25,
@@ -444,6 +444,7 @@ require("packer").startup(function(use)
 
       for _, lsp in pairs({
         "gopls",
+        "golangci_lint_ls",
         "tsserver",
         "ocamlls",
         "terraformls",
@@ -456,6 +457,18 @@ require("packer").startup(function(use)
           on_attach = on_attach,
         })
       end
+
+      -- Need to manually install?
+      -- curl -fLO https://github.com/elixir-lsp/elixir-ls/releases/latest/download/elixir-ls.zip
+      -- unzip elixir-ls.zip -d ~/.elixir-ls
+      -- chmod +x ~/.elixir-ls/language_server.sh
+      require('lspconfig').elixirls.setup({
+        cmd = { "/Users/manzanit0/.elixir-ls/language_server.sh" };
+        capabilities = capabilities,
+        flags = flags,
+        handlers = handlers,
+        on_attach = on_attach,
+      })
 
       require("mason").setup()
       require("mason-lspconfig").setup({ automatic_installation = true })
@@ -514,6 +527,9 @@ require("packer").startup(function(use)
 
   -- Improves UI boxes, such as the LSP rename.
   use({ 'stevearc/dressing.nvim' })
+
+  -- This plugin is nice, but it redefines every LSP mapping... which makes it not very convenient.
+  -- use({ "mhanberg/elixir.nvim", requires = { "nvim-lua/plenary.nvim" } })
 
   -- TODO: do we want this as opposed to vim-fugitive?
   -- use({ 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' })
