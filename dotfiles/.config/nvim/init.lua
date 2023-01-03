@@ -525,6 +525,24 @@ require("packer").startup(function(use)
     end,
   })
 
+  use({ 'mhartington/formatter.nvim', config = function()
+    require("formatter").setup({
+      logging = true,
+      filetype = {
+        lua = {
+          require("formatter.filetypes.lua").stylua,
+        },
+        -- Use the special "*" filetype for defining formatter configurations on
+        -- any filetype
+        ["*"] = {
+          -- "formatter.filetypes.any" defines default configurations for any
+          -- filetype
+          require("formatter.filetypes.any").remove_trailing_whitespace
+        }
+      },
+    })
+      end })
+
   -- Improves UI boxes, such as the LSP rename.
   use({ 'stevearc/dressing.nvim' })
 
