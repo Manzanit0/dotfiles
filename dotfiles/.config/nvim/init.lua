@@ -502,46 +502,38 @@ require("packer").startup(function(use)
   })
 
   -- Organize Go imports on save.
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    pattern = { "*.go" },
-    callback = function()
-      local clients = vim.lsp.buf_get_clients()
-      for _, client in pairs(clients) do
+  local function org_imports()
+    local clients = vim.lsp.buf_get_clients()
+    for _, client in pairs(clients) do
 
-        local params = vim.lsp.util.make_range_params(nil, client.offset_encoding)
-        params.context = { only = { "source.organizeImports" } }
+      local params = vim.lsp.util.make_range_params(nil, client.offset_encoding)
+      params.context = { only = { "source.organizeImports" } }
 
-        local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 5000)
-        for _, res in pairs(result or {}) do
-          for _, r in pairs(res.result or {}) do
-            if r.edit then
-              vim.lsp.util.apply_workspace_edit(r.edit, client.offset_encoding)
-            else
-              vim.lsp.buf.execute_command(r.command)
-            end
+      local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 5000)
+      for _, res in pairs(result or {}) do
+        for _, r in pairs(res.result or {}) do
+          if r.edit then
+            vim.lsp.util.apply_workspace_edit(r.edit, client.offset_encoding)
+          else
+            vim.lsp.buf.execute_command(r.command)
           end
         end
       end
-    end,
+    end
+
+    -- after organising imports, format.
+    vim.lsp.buf.format()
+  end
+
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = { "*.lua", "*.ex", "*.exs" },
+    callback = vim.lsp.buf.format,
   })
 
-  use({ 'mhartington/formatter.nvim', config = function()
-    require("formatter").setup({
-      logging = true,
-      filetype = {
-        lua = {
-          require("formatter.filetypes.lua").stylua,
-        },
-        -- Use the special "*" filetype for defining formatter configurations on
-        -- any filetype
-        ["*"] = {
-          -- "formatter.filetypes.any" defines default configurations for any
-          -- filetype
-          require("formatter.filetypes.any").remove_trailing_whitespace
-        }
-      },
-    })
-      end })
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = { "*.go" },
+    callback = org_imports,
+  })
 
   -- Improves UI boxes, such as the LSP rename.
   use({ 'stevearc/dressing.nvim' })
