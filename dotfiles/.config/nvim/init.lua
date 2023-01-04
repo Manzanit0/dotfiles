@@ -302,6 +302,7 @@ require("packer").startup(function(use)
   use({ "tpope/vim-fugitive",
     config = function()
       vim.keymap.set("n", "<Leader>gs", "<cmd>Git<cr>", { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>gpu", "<cmd>Git push<cr>", { desc = "Git push" })
     end
   })
 
