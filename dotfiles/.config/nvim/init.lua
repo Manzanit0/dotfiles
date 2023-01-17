@@ -86,6 +86,19 @@ vim.cmd [[
 -- In case you use :terminal, bring back ESC.
 vim.cmd [[ tnoremap <Esc> <C-\><C-n> ]]
 
+vim.cmd [[
+  function! ToggleQuickFix()
+    if getqflist({'winid':0}).winid
+      cclose 
+    else
+      copen
+    endif
+  endfunction
+
+  command! -nargs=0 -bar ToggleQuickFix call ToggleQuickFix()
+  nnoremap <silent> cq :ToggleQuickFix<CR>
+]]
+
 -- mappings
 for _, mapping in ipairs({
   -- leader
@@ -162,6 +175,8 @@ require("packer").startup(function(use)
       })
     end
   })
+
+  use({ "romainl/Apprentice" })
 
   -- speed up loading Lua modules in Neovim to improve startup time
   use({ "lewis6991/impatient.nvim",
@@ -271,9 +286,28 @@ require("packer").startup(function(use)
             n = { ["<c-t>"] = trouble.open_with_trouble },
           },
         },
+        pickers = {
+          find_files = {
+            -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
+            find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+          },
+        },
+        extensions = {
+          fzf = {
+            fuzzy = true, -- false will only do exact matching
+            override_generic_sorter = true, -- override the generic sorter
+            override_file_sorter = true, -- override the file sorter
+            case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+            -- the default case_mode is "smart_case"
+          }
+        }
       }
+
+      require('telescope').load_extension('fzf')
     end
   })
+
+  use({ 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' })
 
   -- pretty diagnostics
   use({ "folke/trouble.nvim",
@@ -381,7 +415,7 @@ require("packer").startup(function(use)
 
         mapping = {
           ["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
-          ["<enter>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
+          -- ["<enter>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
           ["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
           ["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
           ["<C-j>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), { "i" }),
@@ -450,6 +484,7 @@ require("packer").startup(function(use)
         "ocamlls",
         "terraformls",
         "sumneko_lua",
+        "clojure_lsp",
       }) do
         require("lspconfig")[lsp].setup({
           capabilities = capabilities,
@@ -539,6 +574,11 @@ require("packer").startup(function(use)
   -- Improves UI boxes, such as the LSP rename.
   use({ 'stevearc/dressing.nvim' })
 
+  -- Mostly useful for mermaid previews.
+  use({
+    "iamcco/markdown-preview.nvim",
+    run = function() vim.fn["mkdp#util#install"]() end,
+  })
   -- This plugin is nice, but it redefines every LSP mapping... which makes it not very convenient.
   -- use({ "mhanberg/elixir.nvim", requires = { "nvim-lua/plenary.nvim" } })
 
