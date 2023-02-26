@@ -541,6 +541,18 @@ require("packer").startup(function(use)
         on_attach = on_attach,
       })
 
+      -- git clone git@github.com:GroovyLanguageServer/groovy-language-server.git ~/groovy-ls
+      -- cd ~/groovy-ls
+      -- ./gradlew build
+      require('lspconfig').groovyls.setup({
+        cmd = { "java", "-jar", "/Users/manzanit0/groovy-ls/build/libs/groovy-ls-all.jar" },
+        capabilities = capabilities,
+        flags = flags,
+        handlers = handlers,
+        on_attach = on_attach,
+      })
+
+
       require("mason").setup()
       require("mason-lspconfig").setup({ automatic_installation = true })
 
