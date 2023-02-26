@@ -99,6 +99,10 @@ vim.cmd [[
   nnoremap <silent> cq :ToggleQuickFix<CR>
 ]]
 
+vim.cmd([[
+    autocmd BufNewFile,BufRead *.Jenkinsfile set filetype=groovy
+]])
+
 -- mappings
 for _, mapping in ipairs({
   -- leader
@@ -382,6 +386,9 @@ require("packer").startup(function(use)
       }
     end
   })
+
+  -- Treesitter doesn't support Jenkinsfile syntax yet.
+  -- use({ "martinda/Jenkinsfile-vim-syntax" })
 
   use({ "neovim/nvim-lspconfig", -- neovim lsp config plugin
     requires = {
