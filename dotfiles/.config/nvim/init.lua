@@ -129,9 +129,9 @@ for _, mapping in ipairs({
   -- Ctrl + r: rename over file
   { "n", "<C-r>nc", "hy:%s/<C-r>h//gc<left><left><left>" },
   -- absolute path (/something/src/foo.txt)
-  { "n", "<leader>cF", "let @+=expand(\"%:p\")<CR>" },
+  { "n", "<leader>cF", ":let @+=expand(\"%:p\")<CR>" },
   -- relative path
-  { "n", "<leader>cf", "let @+=expand(\"%\")<CR>" },
+  { "n", "<leader>cf", ":let @+=expand(\"%\")<CR>" },
   -- keep the cursor in place while joining lines
   { "n", "J", "mZJ`Z" },
   { "n", "<leader>qq", ":qa!<CR>" },
