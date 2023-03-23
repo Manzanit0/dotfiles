@@ -516,12 +516,11 @@ require("packer").startup(function(use)
       end
 
       for _, lsp in pairs({
-        "gopls",
         "golangci_lint_ls",
         "tsserver",
         "ocamlls",
         "terraformls",
-        "sumneko_lua",
+        "lua_ls",
         "clojure_lsp",
       }) do
         require("lspconfig")[lsp].setup({
@@ -531,6 +530,29 @@ require("packer").startup(function(use)
           on_attach = on_attach,
         })
       end
+
+      require("lspconfig").gopls.setup({
+        capabilities = capabilities,
+        flags = flags,
+        handlers = handlers,
+        on_attach = on_attach,
+        settings = {
+          gopls = {
+            buildFlags = { "-tags=db_tests,integration_tests" },
+            gofumpt = true,
+          },
+        },
+      })
+
+      require('lspconfig').yamlls.setup {
+        settings = {
+          yaml = {
+            schemas = {
+              ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*"
+            },
+          },
+        }
+      }
 
       -- Need to manually install?
       -- curl -fLO https://github.com/elixir-lsp/elixir-ls/releases/latest/download/elixir-ls.zip
